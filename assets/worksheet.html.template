@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__TITLE_ES__ · Cuaderno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<style>
+  /* ============================================================
+     Spanish picture-book worksheet (Cuaderno del alumno)
+     Student side: answers stay hidden until Submit.
+     Parent side: folded answer key at the bottom, prints on its own sheet.
+     ============================================================ */
+  :root{
+    --sand:#FBF5E9; --sand-deep:#F2E7D3;
+    --ocean-deep:#0D5A62; --ocean-mid:#16818A; --ocean-light:#DCF0EE;
+    --coral:#E2703A; --coral-light:#FBE4D6;
+    --gold:#E0A233; --gold-light:#FBEBCB;
+    --plum:#6B4E8E; --plum-light:#EDE6F5;
+    --ink:#1C2B2E; --ink-soft:#4B5D60;
+    --white:#FFFFFF; --line:#E4DAC5; --radius:14px;
+    --ok:#2F7D5B; --bad:#C0503A;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--sand); color:var(--ink); line-height:1.6;
+        font-family:system-ui,-apple-system,'Segoe UI',sans-serif; -webkit-font-smoothing:antialiased; }
+  body.fonts-ready{ font-family:'Work Sans',system-ui,-apple-system,sans-serif; }
+  .display{ font-family:Georgia,'Times New Roman',serif; }
+  body.fonts-ready .display{ font-family:'Fraunces',Georgia,serif; }
+  .stripe{ height:8px; background:repeating-linear-gradient(90deg, var(--coral) 0 24px, var(--gold) 24px 48px, var(--ocean-mid) 48px 72px, var(--ink) 72px 74px); }
+  main{ max-width:880px; margin:0 auto; padding:34px 24px 120px; }
+
+  header.hero{ background:linear-gradient(180deg, var(--ocean-deep) 0%, #0A464C 100%); color:var(--sand); padding:28px 24px 24px; }
+  .hero-inner{ max-width:880px; margin:0 auto; }
+  .hero-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:10px; }
+  .badge{ font-size:11.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; padding:5px 12px;
+          border-radius:999px; background:rgba(251,245,233,.14); border:1px solid rgba(251,245,233,.32); margin-right:8px; }
+  .hero-btn{ font-family:inherit; font-size:12px; font-weight:600; padding:7px 14px; border-radius:999px;
+             border:1px solid rgba(251,245,233,.4); background:rgba(251,245,233,.12); color:var(--sand); cursor:pointer; }
+  .hero-btn:hover{ background:rgba(251,245,233,.22); }
+  .cuaderno-label{ font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; opacity:.78; margin-bottom:6px; }
+  h1.title{ font-size:30px; margin:0 0 6px; font-weight:600; }
+  .hero-sub{ font-size:14px; opacity:.82; }
+
+  section.wb{ margin-bottom:46px; }
+  .section-head{ display:flex; align-items:center; gap:12px; margin:0 0 8px; flex-wrap:wrap; }
+  .section-num{ display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+                background:var(--ocean-deep); color:var(--white); font-size:13px; font-weight:700; flex-shrink:0; }
+  .section-title{ font-family:'Fraunces',serif; font-size:22px; margin:0; font-weight:600; color:var(--plum); }
+  .section-hint{ font-size:13.5px; color:var(--ink-soft); margin:0 0 16px; }
+  .box{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; }
+
+  /* matching */
+  .match-cols{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .col-label{ font-size:11.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px; }
+  .chip{ display:block; width:100%; text-align:left; font-family:inherit; font-size:14.5px; padding:10px 14px; margin-bottom:8px;
+         border:1.5px solid var(--line); border-radius:9px; background:var(--sand); color:var(--ink); cursor:pointer;
+         transition:all .15s ease; }
+  .chip:hover:not(.done){ border-color:var(--coral); }
+  .chip.sel{ background:var(--coral-light); border-color:var(--coral); }
+  .chip.done{ background:var(--ocean-light); border-color:var(--ocean-mid); color:var(--ocean-deep); cursor:default; font-weight:600; }
+  .chip.wrong{ background:#FBEAE6; border-color:var(--bad); }
+  .chip.dim{ opacity:.45; }
+  .match-score{ margin-top:12px; font-size:13.5px; font-weight:700; color:var(--ink-soft); }
+  body.submitted .chip{ cursor:default; }
+
+  /* word bank + blanks */
+  .bank{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; padding:12px; background:var(--sand); border-radius:10px;
+         border:1px dashed var(--line); }
+  .bank-label{ width:100%; font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:2px; }
+  .bank-chip{ font-family:inherit; font-size:14px; padding:7px 13px; border-radius:999px; border:1.5px solid var(--line);
+              background:var(--white); color:var(--ink); cursor:pointer; }
+  .bank-chip:hover{ border-color:var(--coral); }
+  .bank-chip.used{ opacity:.35; text-decoration:line-through; }
+  .fill-item,.sum-item{ font-size:15.5px; line-height:2.4; margin-bottom:10px; }
+  .blank{ display:inline-block; min-width:104px; padding:3px 10px; margin:0 4px; border-bottom:2px solid var(--ocean-mid);
+          background:var(--sand); border-radius:5px 5px 0 0; font-weight:600; color:var(--ocean-deep); cursor:pointer; text-align:center; }
+  .blank.empty{ color:var(--ink-soft); font-weight:400; }
+  .blank.filled{ background:var(--ocean-light); }
+  .blank:focus{ outline:2px solid var(--ocean-mid); }
+  .blank.mark-ok{ border-bottom-color:var(--ok); background:#E7F5EE; }
+  .blank.mark-bad{ border-bottom-color:var(--bad); background:#FBEAE6; }
+  .answer-note{ font-size:12.5px; color:var(--ok); font-weight:700; margin-left:6px; display:none; }
+  body.submitted .answer-note.show{ display:inline; }
+  .zh-tail{ color:var(--ink-soft); font-size:13.5px; }
+
+  /* open-ended writing */
+  .imit-item{ margin-bottom:20px; }
+  .imit-pattern{ font-size:14.5px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+  .imit-example{ font-size:14px; color:var(--ink-soft); font-style:italic; margin-bottom:8px; }
+  .scenario{ font-size:13.5px; color:var(--ocean-deep); margin:0 0 6px; padding-left:18px; position:relative; }
+  .scenario:before{ content:'◻'; position:absolute; left:0; color:var(--coral); }
+  textarea{ width:100%; min-height:64px; resize:vertical; font-family:inherit; font-size:14.5px; line-height:1.7;
+            padding:11px 13px; border:1.5px solid var(--line); border-radius:9px; background:var(--sand); color:var(--ink); }
+  textarea:focus{ outline:none; border-color:var(--ocean-mid); background:var(--white); }
+  .logic-row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+  .logic-chip{ font-size:12.5px; font-weight:700; padding:5px 12px; border-radius:999px; background:var(--plum-light); color:var(--plum); }
+
+  /* ---------- Answer key ---------- */
+  #answerKey{ border-top:2px dashed var(--line); padding-top:34px; padding-bottom:20px; }
+  .ak-toggle{ margin-left:auto; font-family:inherit; border:1.5px solid var(--line); background:var(--white); color:var(--ink-soft);
+              font-weight:700; font-size:12.5px; padding:7px 14px; border-radius:999px; cursor:pointer; }
+  .ak-toggle:hover{ border-color:var(--coral); color:var(--coral); }
+  .ak-toggle.on{ background:var(--coral); border-color:var(--coral); color:var(--white); }
+  .ak-body{ display:none; }
+  body.show-answers .ak-body{ display:block; }
+  .ak-block{ margin-bottom:24px; }
+  .ak-block:last-child{ margin-bottom:0; }
+  .ak-h{ font-weight:700; font-size:14.5px; color:var(--plum); margin:0 0 10px; padding-bottom:6px; border-bottom:1px solid var(--line); }
+  .ak-list{ margin:0; padding-left:24px; font-size:14px; line-height:1.95; }
+  .ak-list b{ color:var(--ok); }
+  .ak-alt{ color:var(--ink-soft); font-size:12.5px; }
+  .ak-item{ margin-bottom:12px; }
+  .ak-q{ font-size:13.5px; font-weight:600; }
+  .ak-a{ font-size:13.5px; color:var(--ink-soft); margin-top:3px; line-height:1.8; }
+  .ak-a b{ color:var(--ok); }
+  .ak-a.muted{ font-style:italic; }
+  .ak-full{ margin-top:14px; padding:12px 14px; background:var(--sand-deep); border-radius:8px; font-size:14px; line-height:1.95; }
+  .ak-full b{ color:var(--ok); }
+  .ak-foot{ margin-top:20px; font-size:12px; color:var(--ink-soft); font-style:italic; }
+
+  /* submit bar */
+  .submit-bar{ position:sticky; bottom:0; z-index:40; background:rgba(251,245,233,.97); border-top:1px solid var(--line);
+               padding:14px 24px; backdrop-filter:blur(8px); }
+  .submit-inner{ max-width:880px; margin:0 auto; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+  .submit-btn{ font-family:inherit; background:var(--ocean-deep); color:var(--white); border:none; padding:12px 26px;
+               border-radius:999px; font-weight:700; font-size:14px; cursor:pointer; }
+  .submit-btn:hover{ background:#0A464C; }
+  .retry-link{ font-family:inherit; background:none; border:none; color:var(--ink-soft); font-size:13px;
+               text-decoration:underline; cursor:pointer; }
+  .submit-score{ font-size:14px; font-weight:700; color:var(--ocean-deep); display:none; }
+  .submit-score.show{ display:inline; }
+  .peek{ font-size:12.5px; color:var(--ink-soft); }
+  body.submitted .peek{ display:none; }
+
+  footer{ text-align:center; font-size:12px; color:var(--ink-soft); padding:24px; }
+
+  @media (max-width:760px){
+    .match-cols{ grid-template-columns:1fr; }
+    h1.title{ font-size:24px; }
+  }
+
+  @media print{
+    .hero-btn,.submit-bar,.stripe,.ak-toggle,#answerKey .section-hint{ display:none !important; }
+    body{ background:#fff; }
+    header.hero{ background:#0D5A62 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    main{ padding-bottom:0; }
+    section.wb{ page-break-inside:avoid; }
+    body:not(.show-answers) #answerKey{ display:none !important; }
+    body.show-answers #answerKey{ page-break-before:always; break-before:page; }
+    .ak-body{ display:block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div id="heroBadges"></div>
+      <button type="button" class="hero-btn" id="printBtn">Print · 打印</button>
+    </div>
+    <div class="cuaderno-label">Cuaderno del alumno · 练习册</div>
+    <h1 class="title display" id="heroTitle"></h1>
+    <div class="hero-sub" id="heroSub"></div>
+  </div>
+</header>
+
+<div class="stripe"></div>
+
+<main>
+  <section class="wb" id="sec-match">
+    <div class="section-head"><span class="section-num">1</span><h2 class="section-title">词汇配对 · Emparejar</h2></div>
+    <p class="section-hint" id="matchHint"></p>
+    <div class="box">
+      <div class="match-cols">
+        <div><div class="col-label">Español</div><div id="matchLeft"></div></div>
+        <div><div class="col-label">中文</div><div id="matchRight"></div></div>
+      </div>
+      <div class="match-score" id="matchScore"></div>
+    </div>
+  </section>
+
+  <section class="wb" id="sec-fill">
+    <div class="section-head"><span class="section-num">2</span><h2 class="section-title">选词填空 · Completar</h2></div>
+    <p class="section-hint" id="fillHint"></p>
+    <div class="box">
+      <div class="bank" id="fillBank"></div>
+      <div id="fillList"></div>
+    </div>
+  </section>
+
+  <section class="wb" id="sec-imit">
+    <div class="section-head"><span class="section-num">3</span><h2 class="section-title">仿写句子 · Imitar</h2></div>
+    <p class="section-hint" id="imitHint"></p>
+    <div class="box" id="imitList"></div>
+  </section>
+
+  <section class="wb" id="sec-pimit">
+    <div class="section-head"><span class="section-num">4</span><h2 class="section-title">段落仿写 · Escribir</h2></div>
+    <p class="section-hint" id="pimitHint"></p>
+    <div class="box" id="pimitBox"></div>
+  </section>
+
+  <section class="wb" id="sec-sum">
+    <div class="section-head"><span class="section-num">5</span><h2 class="section-title">大意总结 · Resumen</h2></div>
+    <p class="section-hint" id="sumHint"></p>
+    <div class="box">
+      <div class="bank" id="sumBank"></div>
+      <div id="sumList"></div>
+    </div>
+  </section>
+
+  <section id="answerKey">
+    <div class="section-head">
+      <span class="section-num">✓</span>
+      <h2 class="section-title">答案页 · Clave de respuestas</h2>
+      <button type="button" class="ak-toggle" id="akToggle" aria-expanded="false">显示答案 · Mostrar</button>
+    </div>
+    <p class="section-hint">家长／老师批改用。默认折叠，孩子看不到；展开后打印会单独另起一页输出。</p>
+    <div class="box ak-body" id="akBody"></div>
+  </section>
+</main>
+
+<div class="submit-bar">
+  <div class="submit-inner">
+    <button type="button" class="submit-btn" id="submitBtn">Submit · 提交</button>
+    <span class="submit-score" id="scoreOut"></span>
+    <button type="button" class="retry-link" id="retryBtn">Try again · 重做</button>
+    <span class="peek">客观题答案提交后才会显示 · Answers appear after you submit</span>
+  </div>
+</div>
+
+<footer id="pageFooter"></footer>
+
+<script>
+const INITIAL_DATA = __INITIAL_DATA_JSON__;
+const meta    = INITIAL_DATA.meta || {};
+const matching = INITIAL_DATA.matching || { items: [] };
+const fill     = INITIAL_DATA.fillInBlank || { items: [], wordBank: [] };
+const imit     = INITIAL_DATA.imitation || { items: [] };
+const pimit    = INITIAL_DATA.paragraphImitation || null;
+const summary  = INITIAL_DATA.summary || { segments: [], answers: [], wordBank: [] };
+
+let submitted = false;
+let picked = null;          // { kind:'bank'|'blank', word, el, section }
+let filled  = {};           // blankKey -> word
+
+function esc(s){ return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function norm(s){ return String(s ?? '').trim().toLowerCase(); }
+function el(id){ return document.getElementById(id); }
+
+/* ---------------- hero ---------------- */
+(function hero(){
+  el('heroBadges').innerHTML = [meta.badgeLine || 'Cuaderno del alumno', meta.titleEs]
+    .filter(Boolean).map(b => `<span class="badge">${esc(b)}</span>`).join('');
+  el('heroTitle').textContent = meta.titleEs || '';
+  el('heroSub').textContent = [meta.titleZh, meta.timeEstimate, meta.directions].filter(Boolean).join(' · ');
+  el('pageFooter').textContent = meta.footer || 'Lectura de cuento · Cuaderno del alumno';
+})();
+
+/* ---------------- 1 · matching ---------------- */
+(function buildMatch(){
+  const items = matching.items || [];
+  el('matchHint').textContent = matching.directions || '';
+  const rights = items.map((it, i) => ({ i, text: it.meaning })).sort(() => Math.random() - 0.5);
+  el('matchLeft').innerHTML = items.map((it, i) =>
+    `<button type="button" class="chip" data-kind="word" data-i="${i}">${esc(it.word)}</button>`).join('');
+  el('matchRight').innerHTML = rights.map(r =>
+    `<button type="button" class="chip" data-kind="mean" data-i="${r.i}">${esc(r.text)}</button>`).join('');
+
+  let selWord = null, done = 0;
+  const total = items.length;
+
+  function finish(){
+    el('matchScore').textContent = `已配对 ${done} / ${total}` + (done === total ? ' ✓ 全部正确' : '');
+  }
+  function clickChip(chip){
+    if (submitted || chip.classList.contains('done')) return;
+    const kind = chip.dataset.kind;
+    if (!selWord){
+      document.querySelectorAll('#matchLeft .chip.sel, #matchRight .chip.sel').forEach(c => c.classList.remove('sel'));
+      chip.classList.add('sel');
+      selWord = { chip, kind };
+      return;
+    }
+    if (selWord.chip === chip){ chip.classList.remove('sel'); selWord = null; return; }
+    if (selWord.kind === kind){ selWord.chip.classList.remove('sel'); chip.classList.add('sel'); selWord = { chip, kind }; return; }
+    // one word + one meaning
+    const ok = selWord.chip.dataset.i === chip.dataset.i;
+    if (ok){
+      selWord.chip.classList.remove('sel'); chip.classList.remove('sel');
+      selWord.chip.classList.add('done'); chip.classList.add('done');
+      done++; finish(); selWord = null;
+    } else {
+      const w = selWord.chip, m = chip;
+      w.classList.add('wrong'); m.classList.add('wrong');
+      setTimeout(() => { w.classList.remove('wrong'); m.classList.remove('wrong'); w.classList.remove('sel'); m.classList.remove('sel'); }, 550);
+      selWord = null;
+    }
+  }
+  document.querySelectorAll('#sec-match .chip').forEach(c => c.addEventListener('click', () => clickChip(c)));
+  finish();
+})();
+
+/* ---------------- shared blank machinery (fill + summary) ---------------- */
+function blankKey(section, i){ return section + ':' + i; }
+
+function pickWord(word, sourceEl, section){
+  if (submitted) return;
+  document.querySelectorAll('.bank-chip.sel').forEach(c => c.classList.remove('sel'));
+  if (sourceEl) sourceEl.classList.add('sel');
+  picked = { word, el: sourceEl, section };
+}
+
+function clickBlank(blankEl){
+  if (submitted) return;
+  const key = blankEl.dataset.key;
+  if (picked){
+    filled[key] = picked.word;
+    blankEl.textContent = picked.word;
+    blankEl.classList.remove('empty'); blankEl.classList.add('filled');
+    picked = null;
+    document.querySelectorAll('.bank-chip.sel').forEach(c => c.classList.remove('sel'));
+    refreshBanks();
+  } else if (filled[key]){
+    delete filled[key];
+    blankEl.textContent = '＿＿＿＿';
+    blankEl.classList.add('empty'); blankEl.classList.remove('filled');
+    refreshBanks();
+  }
+}
+
+/* A word bank chip can serve several blanks (summary reuses words), so a chip
+   is dimmed only when every blank it could fill is already taken. */
+function refreshBanks(){
+  ['fillBank', 'sumBank'].forEach(id => {
+    const host = el(id);
+    if (!host) return;
+    host.querySelectorAll('.bank-chip').forEach(chip => {
+      const w = norm(chip.dataset.word);
+      const used = Object.values(filled).some(v => norm(v) === w);
+      chip.classList.toggle('used', used && chip.dataset.multi !== '1');
+    });
+  });
+}
+
+/* ---------------- 2 · fill in the blank ---------------- */
+(function buildFill(){
+  el('fillHint').textContent = fill.directions || '';
+  const bank = fill.wordBank || [];
+  el('fillBank').innerHTML = '<div class="bank-label">词语库 · Banco de palabras</div>' +
+    bank.map(w => `<button type="button" class="bank-chip" data-word="${esc(w)}">${esc(w)}</button>`).join('');
+  el('fillList').innerHTML = (fill.items || []).map((it, i) => `
+    <div class="fill-item">
+      ${esc(it.before || '')}<span class="blank empty" tabindex="0" role="button" data-key="${blankKey('f', i)}">＿＿＿＿</span>${esc(it.after || '')}
+    </div>`).join('');
+
+  el('fillBank').querySelectorAll('.bank-chip').forEach(c =>
+    c.addEventListener('click', () => pickWord(c.dataset.word, c, 'f')));
+  el('fillList').querySelectorAll('.blank').forEach(b => {
+    b.addEventListener('click', () => clickBlank(b));
+    b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); clickBlank(b); } });
+  });
+})();
+
+/* ---------------- 3 · sentence imitation ---------------- */
+(function buildImit(){
+  el('imitHint').textContent = imit.directions || '';
+  el('imitList').innerHTML = (imit.items || []).map((it, i) => `
+    <div class="imit-item">
+      <div class="imit-pattern">${i + 1}. ${esc(it.pattern || '')}</div>
+      ${it.example ? `<div class="imit-example">${esc(it.example)}</div>` : ''}
+      ${(it.scenarios || []).map(s => `<div class="scenario">${esc(s)}</div>`).join('')}
+      <textarea placeholder="写出你的句子 · Escribe tu frase…"></textarea>
+    </div>`).join('') || '<p class="section-hint">本课没有仿写题。</p>';
+})();
+
+/* ---------------- 4 · paragraph imitation ---------------- */
+(function buildPImit(){
+  if (!pimit){ el('sec-pimit').style.display = 'none'; return; }
+  el('pimitHint').textContent = pimit.directions || '';
+  const steps = (pimit.logicSteps || []).map(s =>
+    `<span class="logic-chip">${esc(s.labelZh || s.labelEs || '')}</span>`).join('<span style="color:var(--ink-soft)">→</span>');
+  el('pimitBox').innerHTML = `
+    ${pimit.modelParagraph ? `<div class="imit-example" style="font-style:normal;">范本 · Modelo：${esc(pimit.modelParagraph)}</div>` : ''}
+    ${steps ? `<div class="logic-row">${steps}</div>` : ''}
+    ${(pimit.scenarios || []).map(s => `<div class="scenario">${esc(s.titleZh || s.titleEs || '')}：${esc(s.prompt || '')}</div>`).join('')}
+    <textarea style="min-height:110px;" placeholder="照着范本结构写一段 · Escribe tu párrafo…"></textarea>`;
+})();
+
+/* ---------------- 5 · summary ---------------- */
+(function buildSummary(){
+  el('sumHint').textContent = summary.directions || '';
+  const bank = summary.wordBank || [];
+  el('sumBank').innerHTML = '<div class="bank-label">词语库 · Banco de palabras</div>' +
+    bank.map(w => `<button type="button" class="bank-chip" data-multi="1" data-word="${esc(w)}">${esc(w)}</button>`).join('');
+
+  let html = '', blankNo = 0;
+  (summary.segments || []).forEach(seg => {
+    if (typeof seg === 'string') html += esc(seg);
+    else {
+      const ci = blankNo++;
+      html += `<span class="blank empty" tabindex="0" role="button" data-key="${blankKey('s', ci)}">＿＿＿＿</span>`;
+    }
+  });
+  el('sumList').innerHTML = `<div class="sum-item">${html}</div>
+    <span class="answer-note" id="sumNote"></span>`;
+
+  el('sumBank').querySelectorAll('.bank-chip').forEach(c =>
+    c.addEventListener('click', () => pickWord(c.dataset.word, c, 's')));
+  el('sumList').querySelectorAll('.blank').forEach(b => {
+    b.addEventListener('click', () => clickBlank(b));
+    b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); clickBlank(b); } });
+  });
+})();
+
+/* ---------------- grading ---------------- */
+function acceptedOf(item){ return [item.answer, ...(item.accepted || [])].map(norm); }
+
+function grade(){
+  let right = 0, total = 0;
+
+  (fill.items || []).forEach((it, i) => {
+    const blank = document.querySelector(`.blank[data-key="f:${i}"]`);
+    if (!blank) return;
+    total++;
+    const got = norm(filled['f:' + i] || '');
+    const ok = acceptedOf(it).includes(got);
+    if (ok) right++;
+    blank.classList.add(ok ? 'mark-ok' : 'mark-bad');
+    blank.insertAdjacentHTML('afterend', ok ? '' : `<span class="answer-note show">✓ ${esc(it.answer)}</span>`);
+  });
+
+  const ans = summary.answers || [];
+  (summary.segments || []).forEach(seg => {
+    if (typeof seg === 'string') return;
+    const ci = seg.blank;
+    const blank = document.querySelector(`.blank[data-key="s:${ci}"]`);
+    if (!blank) return;
+    total++;
+    const got = norm(filled['s:' + ci] || '');
+    const want = norm(ans[ci] || '');
+    const ok = got === want;
+    if (ok) right++;
+    blank.classList.add(ok ? 'mark-ok' : 'mark-bad');
+    if (!ok) blank.insertAdjacentHTML('afterend', `<span class="answer-note show">✓ ${esc(ans[ci] || '')}</span>`);
+  });
+
+  const matchDone = document.querySelectorAll('#matchLeft .chip.done').length;
+  total += (matching.items || []).length;
+  right += matchDone;
+
+  return { right, total };
+}
+
+el('submitBtn').addEventListener('click', () => {
+  if (submitted) return;
+  submitted = true;
+  document.body.classList.add('submitted');
+  const { right, total } = grade();
+  const out = el('scoreOut');
+  out.textContent = `得分 ${right} / ${total}` + (right === total ? '　🎉 全对！' : '');
+  out.classList.add('show');
+  el('submitBtn').disabled = true;
+  el('submitBtn').style.opacity = '.55';
+});
+
+el('retryBtn').addEventListener('click', () => window.location.reload());
+
+/* ---------------- answer key (parent copy) ---------------- */
+(function answerKey(){
+  const host = el('akBody');
+  const blocks = [];
+
+  if ((matching.items || []).length)
+    blocks.push('<div class="ak-block"><div class="ak-h">1 · 词汇配对</div><ol class="ak-list">' +
+      matching.items.map(it => `<li>${esc(it.word)} — <b>${esc(it.meaning)}</b></li>`).join('') + '</ol></div>');
+
+  if ((fill.items || []).length)
+    blocks.push('<div class="ak-block"><div class="ak-h">2 · 选词填空</div><ol class="ak-list">' +
+      fill.items.map(it => {
+        const alt = (it.accepted || []).length
+          ? `<span class="ak-alt">（也可写作：${it.accepted.map(esc).join(' / ')}）</span>` : '';
+        return `<li>${esc(it.before || '')}<b>${esc(it.answer)}</b>${esc(it.after || '')}${alt}</li>`;
+      }).join('') + '</ol></div>');
+
+  if ((imit.items || []).length)
+    blocks.push('<div class="ak-block"><div class="ak-h">3 · 仿写句子</div>' +
+      imit.items.map((it, i) => `<div class="ak-item">
+          <div class="ak-q">${i + 1}. ${esc(it.pattern || '')}</div>
+          ${it.example ? `<div class="ak-a">原句：${esc(it.example)}</div>` : ''}
+          ${it.sampleAnswer ? `<div class="ak-a">参考答案：<b>${esc(it.sampleAnswer)}</b></div>`
+                            : '<div class="ak-a muted">开放题：句型用对、意思通顺即可。</div>'}
+        </div>`).join('') + '</div>');
+
+  if (pimit)
+    blocks.push('<div class="ak-block"><div class="ak-h">4 · 段落仿写</div>' +
+      (pimit.modelParagraph ? `<div class="ak-a">范本：${esc(pimit.modelParagraph)}</div>` : '') +
+      ((pimit.logicSteps || []).length
+        ? `<div class="ak-a">结构要求：${pimit.logicSteps.map(s => esc(s.labelZh || s.labelEs || '')).filter(Boolean).join(' → ')}</div>` : '') +
+      (pimit.sampleAnswer ? `<div class="ak-a">参考答案：<b>${esc(pimit.sampleAnswer)}</b></div>` : '') +
+      '<div class="ak-a muted">批改要点：结构齐不齐、动词变位对不对、冠词与性数一致即可，不要求措辞相同。</div></div>');
+
+  if ((summary.answers || []).length){
+    const filledText = (summary.segments || []).map(seg =>
+      typeof seg === 'string' ? esc(seg) : `<b>${esc(summary.answers[seg.blank] || '')}</b>`).join('');
+    blocks.push('<div class="ak-block"><div class="ak-h">5 · 大意总结</div><ol class="ak-list">' +
+      summary.answers.map((a, i) => `<li>第 ${i + 1} 空：<b>${esc(a)}</b></li>`).join('') + '</ol>' +
+      `<div class="ak-full"><b>完整答案：</b>${filledText}</div></div>`);
+  }
+
+  blocks.push('<div class="ak-foot">本页为家长／老师批改用。客观题按答案判分；仿写与段落仿写是开放题，句型正确、意思通顺即可。</div>');
+  host.innerHTML = blocks.join('');
+
+  const toggle = el('akToggle');
+  toggle.addEventListener('click', () => {
+    const on = document.body.classList.toggle('show-answers');
+    toggle.classList.toggle('on', on);
+    toggle.setAttribute('aria-expanded', String(on));
+    toggle.textContent = on ? '隐藏答案 · Ocultar' : '显示答案 · Mostrar';
+  });
+})();
+
+el('printBtn').addEventListener('click', () => window.print());
+document.body.classList.add('fonts-ready');
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => document.body.classList.add('fonts-ready'));
+</script>
+</body>
+</html>

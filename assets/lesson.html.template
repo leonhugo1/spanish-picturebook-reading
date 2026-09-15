@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__TITLE_ES__ · Lectura guiada</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<style>
+  /* ============================================================
+     Spanish picture-book lesson
+     Single file, offline capable. All narration is pre-recorded
+     neural audio embedded as base64 — the browser's system voices
+     are never used.
+     ============================================================ */
+  :root{
+    --sand:#FBF5E9; --sand-deep:#F2E7D3;
+    --ocean-deep:#0D5A62; --ocean-mid:#16818A; --ocean-light:#DCF0EE;
+    --coral:#E2703A; --coral-light:#FBE4D6;
+    --gold:#E0A233; --gold-light:#FBEBCB;
+    --plum:#6B4E8E; --plum-light:#EDE6F5;
+    --ink:#1C2B2E; --ink-soft:#4B5D60;
+    --white:#FFFFFF; --line:#E4DAC5; --radius:14px;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--sand); color:var(--ink); font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+        line-height:1.6; -webkit-font-smoothing:antialiased; }
+  body.fonts-ready{ font-family:'Work Sans',system-ui,-apple-system,sans-serif; }
+  .display{ font-family:Georgia,'Times New Roman',serif; }
+  body.fonts-ready .display{ font-family:'Fraunces',Georgia,serif; }
+  .stripe{ height:8px; width:100%;
+    background:repeating-linear-gradient(90deg, var(--coral) 0 24px, var(--gold) 24px 48px, var(--ocean-mid) 48px 72px, var(--ink) 72px 74px); }
+  main{ max-width:1180px; margin:0 auto; padding:0 24px 60px; }
+
+  /* ---------- Hero ---------- */
+  header.hero{ background:linear-gradient(180deg, var(--ocean-deep) 0%, #0A464C 100%); color:var(--sand); padding:32px 24px 28px; }
+  .hero-inner{ max-width:1180px; margin:0 auto; }
+  .hero-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
+  .badges{ display:flex; gap:10px; flex-wrap:wrap; }
+  .badge{ font-size:11.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+          padding:5px 12px; border-radius:999px; background:rgba(251,245,233,.14); border:1px solid rgba(251,245,233,.32); }
+  .hero-actions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .hero-btn{ font-family:inherit; font-size:12px; font-weight:600; letter-spacing:.04em; padding:7px 14px; border-radius:999px;
+             border:1px solid rgba(251,245,233,.4); background:rgba(251,245,233,.12); color:var(--sand); cursor:pointer;
+             transition:background .15s ease, border-color .15s ease; }
+  .hero-btn:hover{ background:rgba(251,245,233,.22); border-color:rgba(251,245,233,.6); }
+  .export-wrap{ position:relative; }
+  .export-menu{ position:absolute; right:0; top:calc(100% + 6px); z-index:60; min-width:190px; display:none;
+                background:var(--white); border:1px solid var(--line); border-radius:10px; padding:6px;
+                box-shadow:0 8px 24px rgba(31,53,71,.16); }
+  .export-menu.open{ display:block; }
+  .export-item{ display:block; width:100%; text-align:left; font-family:inherit; font-size:13px; padding:9px 12px;
+                border:none; background:none; color:var(--ink); border-radius:7px; cursor:pointer; }
+  .export-item:hover{ background:var(--sand); }
+  h1.title{ font-size:38px; line-height:1.15; margin:0 0 18px; font-weight:600; }
+  .objectives{ background:rgba(251,245,233,.09); border:1px solid rgba(251,245,233,.2); border-radius:var(--radius); padding:16px 20px; }
+  .objectives-label{ font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; opacity:.78; margin-bottom:8px; }
+  .objectives ul{ margin:0; padding-left:20px; font-size:14px; }
+  .objectives li{ margin-bottom:3px; }
+  .time-est{ margin-top:10px; font-size:12.5px; opacity:.72; font-style:italic; }
+
+  /* ---------- Stage nav ---------- */
+  nav.stage-nav{ position:sticky; top:0; z-index:50; background:rgba(251,245,233,.97); border-bottom:1px solid var(--line);
+                 backdrop-filter:blur(8px); }
+  .stage-nav-inner{ max-width:1180px; margin:0 auto; padding:12px 24px; display:flex; gap:10px; flex-wrap:wrap; }
+  .stage-tab{ display:flex; align-items:center; gap:8px; font-family:inherit; font-size:13.5px; font-weight:700;
+              padding:9px 18px; border-radius:999px; border:1.5px solid var(--line); background:var(--white);
+              color:var(--ink-soft); cursor:pointer; transition:all .15s ease; }
+  .stage-tab .dot{ width:7px; height:7px; border-radius:50%; background:var(--sand-deep); }
+  .stage-tab.active{ background:var(--ocean-deep); border-color:var(--ocean-deep); color:var(--white); }
+  .stage-tab.active .dot{ background:var(--gold); }
+  .stage-tab:hover:not(.active){ border-color:var(--ocean-mid); }
+  .stage-panel{ display:none; padding-top:34px; }
+  .stage-panel.active{ display:block; }
+
+  /* ---------- Shared blocks ---------- */
+  .section-head{ display:flex; align-items:center; gap:12px; margin:0 0 8px; flex-wrap:wrap; }
+  .section-num{ display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+                background:var(--ocean-deep); color:var(--white); font-size:13px; font-weight:700; flex-shrink:0; }
+  .section-title{ font-size:24px; margin:0; font-weight:600; color:var(--plum); }
+  .section-hint{ font-size:13.5px; color:var(--ink-soft); margin:0 0 16px; }
+  section.block{ margin-bottom:42px; }
+  .prompt-box{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; }
+  .prompt-box .q{ margin:0 0 12px; font-size:15.5px; font-weight:600; }
+  textarea{ width:100%; min-height:84px; resize:vertical; font-family:inherit; font-size:14px; line-height:1.7;
+            padding:12px 14px; border:1.5px solid var(--line); border-radius:10px; background:var(--sand); color:var(--ink); }
+  textarea:focus{ outline:none; border-color:var(--ocean-mid); background:var(--white); }
+  .stage-footer-nav{ margin:34px 0 0; text-align:right; }
+  .next-btn{ font-family:inherit; font-size:14px; font-weight:700; padding:12px 26px; border-radius:999px; border:none;
+             background:var(--coral); color:var(--white); cursor:pointer; }
+  .next-btn:hover{ background:#D2602C; }
+
+  /* Flip cards (key words) */
+  .flash-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:14px; }
+  .fcard{ perspective:1000px; height:132px; cursor:pointer; }
+  .fcard-inner{ position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d; }
+  .fcard.flipped .fcard-inner{ transform:rotateY(180deg); }
+  .fcard-face{ position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; padding:14px;
+               display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; }
+  .fcard-front{ background:var(--white); border:1px solid var(--line); }
+  .fcard-front .w{ font-family:'Fraunces',serif; font-size:19px; font-weight:700; color:var(--ink); }
+  .fcard-back{ background:var(--gold-light); border:1px solid var(--gold); transform:rotateY(180deg); }
+  .fcard-back .m{ font-size:14px; font-weight:600; color:var(--ink); }
+  .fcard-back .e{ font-size:12px; color:var(--ink-soft); margin-top:6px; }
+  .flip-icon{ position:absolute; top:8px; right:10px; font-size:12px; color:var(--ink-soft); }
+
+  /* ---------- While-reading: view switch ---------- */
+  .view-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin:0 0 22px; padding-bottom:16px; border-bottom:1px solid var(--line); }
+  .view-tab{ font-family:inherit; font-size:13px; font-weight:700; padding:8px 16px; border-radius:999px;
+             border:1.5px solid var(--line); background:var(--white); color:var(--ink-soft); cursor:pointer; }
+  .view-tab.active{ background:var(--coral); border-color:var(--coral); color:var(--white); }
+  .view-tab:hover:not(.active){ border-color:var(--coral); }
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* ---------- Picture-book viewer ---------- */
+  .book-toolbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:0 0 16px; }
+  .book-pager{ font-family:'Fraunces',serif; font-weight:700; font-size:15px; color:var(--plum); }
+  .book-pager b{ color:var(--coral); font-size:19px; }
+  .book-tools{ display:flex; gap:8px; flex-wrap:wrap; }
+  .book-tool{ font-family:inherit; border:1.5px solid var(--line); background:var(--white); color:var(--ink-soft);
+              font-weight:700; font-size:12.5px; padding:7px 13px; border-radius:999px; cursor:pointer; }
+  .book-tool:hover{ border-color:var(--coral); color:var(--coral); }
+  .book-tool.on{ background:var(--coral); border-color:var(--coral); color:var(--white); }
+  .book-stage{ display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,1fr); gap:24px; align-items:start; }
+  .book-figure{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:12px;
+                box-shadow:0 1px 0 rgba(31,53,71,.05); }
+  .book-figure img{ display:block; width:100%; height:auto; border-radius:10px; }
+  .book-figure-empty{ padding:48px 20px; text-align:center; color:var(--ink-soft); font-size:13px; background:var(--sand-deep); border-radius:10px; }
+  .book-caption{ margin-top:10px; font-size:12px; color:var(--ink-soft); text-align:center; font-style:italic; }
+  .book-text{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; }
+  .book-play{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+  .book-play .hint{ font-size:12px; color:var(--ink-soft); }
+  .book-line{ border-left:4px solid var(--line); border-radius:8px; padding:10px 14px; margin:0 0 10px; cursor:pointer;
+              transition:background .18s ease, border-color .18s ease; }
+  .book-line:hover{ background:var(--sand); }
+  .book-line.active{ border-left-color:var(--coral); background:var(--coral-light); }
+  .book-line-es{ font-family:'Fraunces',serif; font-size:22px; line-height:1.42; font-weight:600; }
+  body:not(.fonts-ready) .book-line-es{ font-family:Georgia,serif; }
+  .book-line-tools{ display:flex; align-items:center; gap:8px; margin-top:6px; }
+  .book-line-zh{ font-size:14.5px; line-height:1.6; color:var(--ink-soft); }
+  .book-line-grammar{ margin-top:8px; font-size:13px; line-height:1.7; color:var(--ocean-deep);
+                      background:var(--ocean-light); border-radius:8px; padding:8px 12px; }
+  .book-line-grammar b{ color:var(--coral); }
+  .book-line.es-hidden .book-line-es{ filter:blur(7px); user-select:none; }
+  .book-page-zh{ margin-top:14px; padding-top:14px; border-top:1px dashed var(--line); font-size:14px;
+                 line-height:1.75; color:var(--ink-soft); }
+  .book-page-zh b{ color:var(--ink); }
+  .book-note{ margin-top:14px; font-size:13px; line-height:1.7; color:var(--ocean-deep);
+              background:var(--ocean-light); border-radius:8px; padding:10px 12px; }
+  .book-nav{ display:flex; align-items:center; justify-content:center; gap:14px; margin-top:22px; flex-wrap:wrap; }
+  .book-nav-btn{ font-family:inherit; border:1.5px solid var(--line); background:var(--white); color:var(--ink);
+                 font-weight:700; font-size:14px; padding:10px 20px; border-radius:999px; cursor:pointer; }
+  .book-nav-btn:hover:not(:disabled){ border-color:var(--coral); color:var(--coral); }
+  .book-nav-btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .book-dots{ display:flex; gap:7px; flex-wrap:wrap; justify-content:center; max-width:420px; }
+  .book-dot{ width:11px; height:11px; border-radius:50%; border:none; background:#C9BFA6; cursor:pointer; padding:0;
+             transition:all .15s ease; }
+  .book-dot:hover{ background:var(--gold); }
+  .book-dot.active{ background:var(--coral); transform:scale(1.35); }
+
+  /* Word cards */
+  .words{ margin-top:34px; }
+  .words-h{ font-family:'Fraunces',serif; font-size:20px; color:var(--plum); margin:0 0 14px;
+            padding-bottom:8px; border-bottom:2px solid var(--line); }
+  .word-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:14px; }
+  .word{ background:var(--white); border:1px solid var(--line); border-radius:12px; padding:14px; text-align:center;
+         cursor:pointer; transition:all .15s ease; }
+  .word:hover{ border-color:var(--coral); transform:translateY(-2px); box-shadow:0 4px 12px rgba(31,53,71,.08); }
+  .word.speaking{ border-color:var(--coral); background:var(--coral-light); }
+  .word img{ width:100%; height:96px; object-fit:contain; border-radius:8px; background:var(--sand); margin-bottom:10px; }
+  .word-emoji{ font-size:44px; line-height:96px; margin-bottom:10px; }
+  .word-es{ font-family:'Fraunces',serif; font-size:19px; font-weight:700; }
+  .word-pos{ font-size:11px; color:var(--ink-soft); font-style:italic; margin-left:5px; }
+  .word-zh{ font-size:13.5px; color:var(--ink-soft); margin-top:4px; }
+  .word-ex{ font-size:12px; color:var(--ocean-deep); margin-top:8px; line-height:1.5; }
+
+  /* ---------- Intensive reading ---------- */
+  .int-h{ font-family:'Fraunces',serif; font-size:21px; color:var(--plum); margin:30px 0 14px;
+          padding-bottom:8px; border-bottom:2px solid var(--line); }
+  .int-h:first-child{ margin-top:0; }
+  .int-sent{ background:var(--white); border:1px solid var(--line); border-left:4px solid var(--coral);
+             border-radius:10px; padding:18px 22px; margin:0 0 14px; }
+  .int-sent-meta{ margin-bottom:8px; }
+  .int-sent-para{ font-family:'Fraunces',serif; font-weight:600; color:var(--plum); font-size:13px;
+                  background:var(--sand); padding:3px 10px; border-radius:6px; letter-spacing:.5px; }
+  .int-sent-es{ font-size:16px; line-height:1.75; font-weight:500; margin-bottom:10px; }
+  .int-sent-zh{ font-size:14px; line-height:1.75; color:var(--ink-soft); background:var(--sand);
+                padding:10px 14px; border-radius:8px; margin-bottom:10px; }
+  .int-grammar{ font-size:13px; line-height:1.75; color:var(--ocean-deep); }
+  .int-grammar b{ color:var(--coral); }
+  .int-vocab{ background:var(--white); border:1px solid var(--line); border-radius:10px; padding:16px 20px; margin:0 0 12px;
+              box-shadow:0 1px 0 rgba(31,53,71,.04); }
+  .int-vocab-word{ font-family:'Fraunces',serif; font-size:24px; font-weight:600; color:var(--plum); }
+  .int-vocab-pos{ font-size:12px; color:var(--ink-soft); margin-left:10px; font-style:italic; }
+  .int-vocab-zh{ font-size:14px; margin:6px 0 10px; line-height:1.6; }
+  .int-vocab-line{ font-size:13px; color:var(--ocean-deep); margin:3px 0; line-height:1.6; }
+  .int-vocab-line b{ color:var(--ink-soft); font-weight:600; }
+  .int-cult{ background:var(--white); border:1px solid var(--line); border-left:4px solid var(--gold);
+             border-radius:10px; padding:14px 18px; margin:0 0 12px; }
+  .int-cult-term{ font-family:'Fraunces',serif; font-weight:600; color:var(--plum); font-size:18px; margin-bottom:4px; }
+  .int-cult-ctx{ font-size:12px; color:var(--ink-soft); margin:4px 0 8px; font-style:italic; }
+  .int-cult-expl{ font-size:14px; line-height:1.7; }
+  .int-empty{ padding:30px; text-align:center; color:var(--ink-soft); background:var(--white);
+              border:1px dashed var(--line); border-radius:10px; }
+
+  /* ---------- Post-reading ---------- */
+  .post-card{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:16px; }
+  .post-card h3{ font-family:'Fraunces',serif; font-size:17px; color:var(--plum); margin:0 0 10px; }
+  .speak-item{ margin-bottom:14px; }
+  .speak-item .q{ font-size:15px; font-weight:600; margin-bottom:8px; }
+  .side-btns{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px; }
+  .side-btn{ font-family:inherit; font-size:13px; font-weight:700; padding:9px 16px; border-radius:999px;
+             border:1.5px solid var(--line); background:var(--white); color:var(--ink-soft); cursor:pointer; }
+  .side-btn.on{ background:var(--ocean-deep); border-color:var(--ocean-deep); color:var(--white); }
+
+  /* ---------- Speaker buttons ---------- */
+  .tts{ display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; flex-shrink:0;
+        border-radius:50%; border:1px solid var(--line); background:var(--white); color:var(--ink-soft);
+        font-size:12px; cursor:pointer; transition:all .15s ease; }
+  .tts:hover{ border-color:var(--coral); color:var(--coral); }
+  .tts.speaking{ background:var(--coral); border-color:var(--coral); color:var(--white); }
+  .tts.paused{ background:var(--gold); border-color:var(--gold); color:var(--white); }
+  .tts.missing{ background:#D64545; border-color:#D64545; color:#fff; }
+
+  /* ---------- Misc ---------- */
+  footer{ text-align:center; font-size:12px; color:var(--ink-soft); padding:30px 24px 50px; }
+  .modal-backdrop{ position:fixed; inset:0; z-index:80; background:rgba(28,43,46,.5); display:none;
+                   align-items:center; justify-content:center; padding:24px; }
+  .modal-backdrop.open{ display:flex; }
+  .modal-box{ background:var(--white); border-radius:var(--radius); padding:24px; max-width:520px; width:100%; position:relative; }
+  .modal-close{ position:absolute; top:12px; right:14px; border:none; background:none; font-size:18px; cursor:pointer; color:var(--ink-soft); }
+  .modal-label{ font-size:11.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--coral); margin-bottom:8px; }
+  .tip-btn{ display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%;
+            border:1.5px solid var(--line); background:var(--white); color:var(--ink-soft); font-size:11px; font-weight:700;
+            cursor:pointer; margin-left:4px; }
+  .tip-btn:hover{ border-color:var(--coral); color:var(--coral); }
+
+  @media (max-width:900px){
+    .book-stage{ grid-template-columns:1fr; }
+    .book-line-es{ font-size:20px; }
+    h1.title{ font-size:29px; }
+    .book-nav{ gap:10px; }
+    .book-nav-btn{ padding:9px 16px; font-size:13px; }
+  }
+
+  @media print{
+    .hero-actions,.stage-nav,.stripe,.stage-footer-nav,.book-tool,.book-nav,.tts,.tip-btn,.modal-backdrop{ display:none !important; }
+    body{ background:#fff; }
+    header.hero{ background:#0D5A62 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .stage-panel{ display:block !important; page-break-after:always; }
+    .view{ display:block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner" id="heroInner"></div>
+</header>
+
+<div class="stripe"></div>
+
+<nav class="stage-nav">
+  <div class="stage-nav-inner" id="stageNav">
+    <button class="stage-tab active" data-stage="pre"><span class="dot"></span>1 · 读前 · Pre-lectura</button>
+    <button class="stage-tab" data-stage="while"><span class="dot"></span>2 · 读中 · Lectura</button>
+    <button class="stage-tab" data-stage="post"><span class="dot"></span>3 · 读后 · Post-lectura</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ================= PRE ================= -->
+  <div class="stage-panel active" id="panel-pre">
+    <section class="block" id="preLeadIn"></section>
+    <section class="block" id="prePrediction"></section>
+    <section class="block">
+      <div class="section-head"><span class="section-num">3</span><h2 class="section-title">读前词汇 · Palabras clave</h2></div>
+      <p class="section-hint">先认识几个会挡住理解的词。点卡片翻面看意思。</p>
+      <div class="flash-grid" id="preWords"></div>
+    </section>
+    <div class="stage-footer-nav"><button class="next-btn" data-goto="while">开始读绘本 · Leer el cuento →</button></div>
+  </div>
+
+  <!-- ================= WHILE ================= -->
+  <div class="stage-panel" id="panel-while">
+    <div class="view-tabs" id="viewTabs">
+      <button class="view-tab active" data-view="book">1 · 绘本精读 · Lectura del cuento</button>
+      <button class="view-tab" data-view="deep">2 · 精读讲义 · Lectura intensiva</button>
+    </div>
+
+    <!-- --- picture book --- -->
+    <div class="view active" id="view-book">
+      <div class="book-toolbar">
+        <div class="book-pager" id="bookPager"></div>
+        <div class="book-tools">
+          <button type="button" class="book-tool" id="esToggle">隐藏西语 · Ocultar español</button>
+          <button type="button" class="book-tool on" id="zhToggle">隐藏中文 · Ocultar chino</button>
+        </div>
+      </div>
+      <div class="book-stage" id="bookStage"></div>
+      <div class="book-nav">
+        <button type="button" class="book-nav-btn" id="bookPrev">‹ 上一页</button>
+        <div class="book-dots" id="bookDots"></div>
+        <button type="button" class="book-nav-btn" id="bookNext">下一页 ›</button>
+      </div>
+      <div class="words" id="bookWords"></div>
+    </div>
+
+    <!-- --- intensive handout --- -->
+    <div class="view" id="view-deep">
+      <h3 class="int-h">逐句精讲 · Frase por frase</h3>
+      <div id="deepSentences"></div>
+      <h3 class="int-h">重点词深挖 · Vocabulario en profundidad</h3>
+      <div id="deepVocab"></div>
+      <h3 class="int-h">文化背景 · Notas culturales</h3>
+      <div id="deepCulture"></div>
+    </div>
+
+    <div class="stage-footer-nav"><button class="next-btn" data-goto="post">读完了 · Ir al cierre →</button></div>
+  </div>
+
+  <!-- ================= POST ================= -->
+  <div class="stage-panel" id="panel-post"></div>
+
+</main>
+
+<footer id="pageFooter"></footer>
+
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="close">✕</button>
+    <div class="modal-label">教师提示 · Nota para el adulto</div>
+    <p id="modalText"></p>
+  </div>
+</div>
+
+<script>
+const INITIAL_DATA = __INITIAL_DATA_JSON__;
+const meta   = INITIAL_DATA.meta || {};
+const tips   = INITIAL_DATA.teacherTips || {};
+const book   = INITIAL_DATA.pictureBook || { pages: [] };
+const pre    = INITIAL_DATA.preReading || {};
+const deep   = (INITIAL_DATA.whileReading || {}).intensiveReading || {};
+const post   = INITIAL_DATA.postReading || {};
+const AUDIO  = INITIAL_DATA.audio || {};
+
+/* ---------------- helpers ---------------- */
+function esc(s){ return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function nl2br(s){ return esc(s).replace(/\n/g,'<br>'); }
+function el(id){ return document.getElementById(id); }
+function tipBtn(key, text){
+  if (!key) return '';
+  return `<button type="button" class="tip-btn" data-tip="${esc(key)}" title="${esc(text || '教师提示')}">i</button>`;
+}
+
+/* ---------------- hero ---------------- */
+(function renderHero(){
+  const badges = [meta.badgeLine || 'Lectura de cuento', meta.titleEs].filter(Boolean)
+    .map(b => `<span class="badge">${esc(b)}</span>`).join('');
+  const objs = (meta.objectives || []).map(o => `<li>${esc(o)}</li>`).join('');
+  el('heroInner').innerHTML = `
+    <div class="hero-top">
+      <div class="badges">${badges}</div>
+      <div class="hero-actions">
+        <div class="export-wrap">
+          <button type="button" class="hero-btn" id="exportBtn" aria-haspopup="true" aria-expanded="false">Export ▾</button>
+          <div class="export-menu" id="exportMenu">
+            <button type="button" class="export-item" data-export="html">Export all as HTML</button>
+            <button type="button" class="export-item" data-export="pdf">Export current as PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h1 class="title display">${esc(meta.titleEs || '')}</h1>
+    ${meta.titleZh ? `<div style="font-size:17px;opacity:.85;margin:-10px 0 18px;">${esc(meta.titleZh)}</div>` : ''}
+    <div class="objectives">
+      <div class="objectives-label">学习目标 · Objetivos</div>
+      <ul>${objs}</ul>
+      ${meta.timeEstimate ? `<div class="time-est">${esc(meta.timeEstimate)}</div>` : ''}
+    </div>`;
+  el('pageFooter').textContent = meta.footer || 'Spanish picture-book reading · Lectura guiada de cuento';
+})();
+
+/* ---------------- audio engine (pre-recorded only) ---------------- */
+let curAudio = null, curBtn = null;
+
+function setBtnState(btn, state){
+  if (!btn) return;
+  const map = {
+    idle:     { icon:'🔊', title:'朗读 · Escuchar' },
+    speaking: { icon:'⏸', title:'暂停 · Pausar' },
+    paused:   { icon:'▶', title:'继续 · Continuar' },
+  };
+  const m = map[state] || map.idle;
+  btn.textContent = m.icon;
+  btn.title = m.title;
+  btn.classList.toggle('speaking', state === 'speaking');
+  btn.classList.toggle('paused', state === 'paused');
+}
+
+function stopAudio(){
+  if (curAudio){
+    try { curAudio.pause(); curAudio.currentTime = 0; } catch(e){}
+    curAudio = null;
+  }
+  if (curBtn){ setBtnState(curBtn, 'idle'); curBtn = null; }
+}
+
+function flashNoAudio(btn, segId){
+  console.warn('[audio] no recording for ' + segId + ' — rebuild with audio enabled');
+  if (!btn) return;
+  const prev = btn.textContent;
+  btn.textContent = '🔇';
+  btn.classList.add('missing');
+  btn.title = '这一段没有预录音频 · No audio for ' + segId;
+  setTimeout(() => { btn.classList.remove('missing'); btn.textContent = prev; }, 2200);
+}
+
+/* Play one segment. `btn` is optional — cards pass null so the button state
+   machine never touches their innerHTML. */
+function playSeg(segId, btn){
+  const b64 = AUDIO[segId];
+  if (!b64){ flashNoAudio(btn, segId); return false; }
+  if (btn && curBtn === btn && curAudio && !curAudio.paused){
+    curAudio.pause(); setBtnState(btn, 'paused'); return true;
+  }
+  if (btn && curBtn === btn && curAudio && curAudio.paused){
+    curAudio.play().catch(()=>{}); setBtnState(btn, 'speaking'); return true;
+  }
+  stopAudio();
+  try {
+    // data: URI keeps the file offline and avoids Blob-URL rejections in
+    // stricter browser/privacy configurations. Never set crossOrigin here.
+    const a = new Audio('data:audio/mp3;base64,' + b64);
+    a.preload = 'auto';
+    a.onended = () => { if (curAudio === a) curAudio = null; if (curBtn === btn) setBtnState(btn, 'idle'); };
+    a.onerror = () => { if (curAudio === a) curAudio = null; flashNoAudio(btn, segId); };
+    curAudio = a;
+    if (btn){ curBtn = btn; setBtnState(btn, 'speaking'); }
+    a.play().catch(() => { stopAudio(); flashNoAudio(btn, segId); });
+    return true;
+  } catch(e){
+    console.error('[audio] playback failed', e);
+    return false;
+  }
+}
+
+/* ---------------- pre-reading ---------------- */
+(function renderPre(){
+  const li = pre.leadIn || {};
+  el('preLeadIn').innerHTML = `
+    <div class="section-head"><span class="section-num">1</span>
+      <h2 class="section-title">导入 · Antes de leer</h2>${tipBtn(li.tipKey, '给家长的引导提示')}</div>
+    <div class="prompt-box">
+      <p class="q">${esc(li.prompt || '')}</p>
+      <textarea placeholder="${esc(li.placeholder || '')}"></textarea>
+    </div>`;
+
+  const pr = pre.prediction || {};
+  el('prePrediction').innerHTML = `
+    <div class="section-head"><span class="section-num">2</span><h2 class="section-title">预测 · Predecir</h2></div>
+    ${pr.hint ? `<p class="section-hint">${esc(pr.hint)}</p>` : ''}
+    <div class="prompt-box">
+      <p class="q">${esc(pr.prompt || '')}</p>
+      <textarea placeholder="${esc(pr.placeholder || '')}"></textarea>
+    </div>`;
+
+  const words = pre.keyWords || [];
+  el('preWords').innerHTML = words.length ? words.map((w, i) => `
+    <div class="fcard" data-flip tabindex="0" role="button" aria-label="${esc(w.word)}">
+      <div class="fcard-inner">
+        <div class="fcard-face fcard-front">
+          <span class="flip-icon">↻</span>
+          <div class="w">${esc(w.word)}</div>
+          <button type="button" class="tts" data-segid="pre.kw.${i}" title="朗读 · Escuchar">🔊</button>
+        </div>
+        <div class="fcard-face fcard-back">
+          <div class="m">${esc(w.meaning || '')}</div>
+          ${w.example ? `<div class="e">${esc(w.example)}</div>` : ''}
+        </div>
+      </div>
+    </div>`).join('') : '<p class="section-hint">本课没有读前词汇。</p>';
+
+  document.querySelectorAll('[data-flip]').forEach(c => {
+    const flip = () => c.classList.toggle('flipped');
+    c.addEventListener('click', e => { if (!e.target.closest('.tts')) flip(); });
+    c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); flip(); } });
+  });
+})();
+
+/* ---------------- picture-book viewer ---------------- */
+const pages = (book.pages || []).slice().sort((a, b) => (Number(a.page) || 0) - (Number(b.page) || 0));
+let pageIdx = 0, showZh = true, maskEs = false;
+
+function pageNo(p, i){ const n = Number(p.page); return Number.isFinite(n) && n > 0 ? n : i + 1; }
+function linesOf(p){
+  if (Array.isArray(p.sentences) && p.sentences.length) return p.sentences;
+  const whole = String(p.textEs || '').trim();
+  return whole ? [{ es: whole, zh: p.textZh || '' }] : [];
+}
+
+function renderBook(){
+  const p = pages[pageIdx];
+  if (!p) return;
+  const n = pageNo(p, pageIdx);
+  const lines = linesOf(p);
+
+  el('bookPager').innerHTML = `Página <b>${n}</b> / ${pages.length}`;
+
+  const figure = p.image
+    ? `<div class="book-figure"><img src="${p.image}" alt="Página ${n}">` +
+      (p.caption ? `<div class="book-caption">${esc(p.caption)}</div>` : '') + `</div>`
+    : `<div class="book-figure"><div class="book-figure-empty">本页暂无插图 · Sin ilustración</div></div>`;
+
+  const body = lines.map((s, j) => {
+    const seg = `book.sent.${n}.${j + 1}`;
+    const g = Array.isArray(s.grammar) && s.grammar.length
+      ? `<div class="book-line-grammar"><b>语法 ·</b><br>${s.grammar.map(x => nl2br(x)).join('<br>')}</div>` : '';
+    return `<div class="book-line${maskEs ? ' es-hidden' : ''}" data-segid="${seg}">
+        <div class="book-line-es">${nl2br(s.es || '')}</div>
+        <div class="book-line-tools">
+          <span class="book-line-zh">${nl2br(s.zh || '')}</span>
+          <button type="button" class="tts" data-segid="${seg}" title="朗读这一句 · Escuchar la frase">🔊</button>
+        </div>${g}</div>`;
+  }).join('');
+
+  const play = `<div class="book-play">
+      <button type="button" class="book-tool on" id="playPage" data-segid="book.page.${n}">▶ 整页连读 · Leer la página</button>
+      <span class="hint">点任意一句可单独朗读 · Toca una frase para oírla sola</span>
+    </div>`;
+
+  const zh = p.textZh ? `<div class="book-page-zh"><b>全页大意 ·</b> ${nl2br(p.textZh)}</div>` : '';
+  const note = p.note ? `<div class="book-note"><b>本页提示 ·</b> ${nl2br(p.note)}</div>` : '';
+
+  el('bookStage').innerHTML = figure + `<div class="book-text">${play}${body}${zh}${note}</div>`;
+  if (!showZh) el('bookStage').querySelectorAll('.book-line-zh, .book-page-zh').forEach(e => { e.style.display = 'none'; });
+
+  el('bookDots').innerHTML = pages.map((pp, i) =>
+    `<button type="button" class="book-dot${i === pageIdx ? ' active' : ''}" data-dot="${i}" title="Página ${pageNo(pp, i)}"></button>`).join('');
+  el('bookPrev').disabled = pageIdx === 0;
+  el('bookNext').disabled = pageIdx === pages.length - 1;
+
+  // wiring ------------------------------------------------------------
+  const bind = (node, segid) => { if (node) node.addEventListener('click', e => { e.stopPropagation(); highlight(node.closest('.book-line')); playSeg(segid, node); }); };
+  bind(el('playPage'), 'book.page.' + n);
+  el('bookStage').querySelectorAll('.book-line .tts').forEach(b => bind(b, b.dataset.segid));
+  el('bookStage').querySelectorAll('.book-line').forEach(line => {
+    line.addEventListener('click', e => {
+      if (e.target.closest('.tts')) return;
+      highlight(line);
+      playSeg(line.dataset.segid, line.querySelector('.tts'));
+    });
+  });
+  el('bookDots').querySelectorAll('.book-dot').forEach(d =>
+    d.addEventListener('click', () => { stopAudio(); pageIdx = Number(d.dataset.dot); renderBook(); }));
+}
+
+function highlight(line){
+  el('bookStage').querySelectorAll('.book-line.active').forEach(x => x.classList.remove('active'));
+  if (line) line.classList.add('active');
+}
+
+function turn(delta){
+  const next = pageIdx + delta;
+  if (next < 0 || next >= pages.length) return;
+  stopAudio(); pageIdx = next; renderBook();
+}
+
+el('bookPrev').addEventListener('click', () => turn(-1));
+el('bookNext').addEventListener('click', () => turn(1));
+
+el('esToggle').addEventListener('click', () => {
+  maskEs = !maskEs;
+  el('esToggle').classList.toggle('on', maskEs);
+  el('esToggle').textContent = maskEs ? '显示西语 · Mostrar español' : '隐藏西语 · Ocultar español';
+  el('bookStage').querySelectorAll('.book-line').forEach(x => x.classList.toggle('es-hidden', maskEs));
+});
+
+el('zhToggle').addEventListener('click', () => {
+  showZh = !showZh;
+  el('zhToggle').classList.toggle('on', showZh);
+  el('zhToggle').textContent = showZh ? '隐藏中文 · Ocultar chino' : '显示中文 · Mostrar chino';
+  el('bookStage').querySelectorAll('.book-line-zh, .book-page-zh').forEach(x => { x.style.display = showZh ? '' : 'none'; });
+});
+
+document.addEventListener('keydown', e => {
+  const panel = el('panel-while');
+  if (!panel.classList.contains('active')) return;
+  const tag = (e.target.tagName || '').toUpperCase();
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown'){ e.preventDefault(); turn(1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); turn(-1); }
+});
+
+/* word cards: plain divs, so play without touching innerHTML */
+(function renderWords(){
+  const cards = Array.isArray(book.wordCards) ? book.wordCards : [];
+  const host = el('bookWords');
+  if (!cards.length){ host.innerHTML = ''; return; }
+  host.innerHTML = '<h3 class="words-h">单词卡 · Palabras clave</h3><div class="word-grid">' +
+    cards.map((w, i) => {
+      const vis = w.image ? `<img src="${w.image}" alt="${esc(w.es)}">`
+                          : (w.emoji ? `<div class="word-emoji">${esc(w.emoji)}</div>` : '');
+      return `<div class="word" role="button" tabindex="0" data-segid="book.word.${i}">
+          ${vis}
+          <div><span class="word-es">${esc(w.es || '')}</span>${w.pos ? `<span class="word-pos">${esc(w.pos)}</span>` : ''}</div>
+          ${w.zh ? `<div class="word-zh">${esc(w.zh)}</div>` : ''}
+          ${w.exampleEs ? `<div class="word-ex">${esc(w.exampleEs)}</div>` : ''}
+        </div>`;
+    }).join('') + '</div>';
+
+  host.querySelectorAll('.word').forEach(card => {
+    const go = () => {
+      card.classList.add('speaking');
+      setTimeout(() => card.classList.remove('speaking'), 1200);
+      playSeg(card.dataset.segid, null);
+    };
+    card.addEventListener('click', go);
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+  });
+})();
+
+/* ---------------- intensive handout ---------------- */
+(function renderDeep(){
+  // Sentence-by-sentence is folded in from the book pages, so authors never
+  // have to retype the same sentences.
+  const sent = el('deepSentences');
+  const rows = [];
+  pages.forEach((p, i) => {
+    const n = pageNo(p, i);
+    linesOf(p).forEach((s, j) => {
+      const g = Array.isArray(s.grammar) && s.grammar.length
+        ? `<div class="int-grammar"><b>语法/词法 ·</b><br>${s.grammar.map(x => nl2br(x)).join('<br>')}</div>` : '';
+      rows.push(`<div class="int-sent">
+          <div class="int-sent-meta"><span class="int-sent-para">Página ${n} · 第 ${j + 1} 句</span></div>
+          ${s.es ? `<div class="int-sent-es">${nl2br(s.es)}</div>` : ''}
+          ${s.zh ? `<div class="int-sent-zh">译 · ${nl2br(s.zh)}</div>` : ''}${g}</div>`);
+    });
+  });
+  sent.innerHTML = rows.length ? rows.join('') : '<div class="int-empty">本课暂无逐句精讲。</div>';
+
+  const dv = deep.deepVocabulary || [];
+  el('deepVocab').innerHTML = dv.length ? dv.map(v => `
+    <div class="int-vocab">
+      <div><span class="int-vocab-word">${esc(v.word || '')}</span>${v.pos ? `<span class="int-vocab-pos">${esc(v.pos)}</span>` : ''}</div>
+      ${v.meaningZh ? `<div class="int-vocab-zh">${esc(v.meaningZh)}</div>` : ''}
+      ${Array.isArray(v.collocations) && v.collocations.length
+        ? `<div class="int-vocab-line"><b>搭配 ·</b> ${v.collocations.map(c => esc(c)).join(' · ')}</div>` : ''}
+      ${v.note ? `<div class="int-vocab-line"><b>延伸 ·</b> ${esc(v.note)}</div>` : ''}
+    </div>`).join('') : '<div class="int-empty">本课暂无重点词深挖。</div>';
+
+  const cn = deep.culturalNotes || [];
+  el('deepCulture').innerHTML = cn.length ? cn.map(c => `
+    <div class="int-cult">
+      ${c.term ? `<div class="int-cult-term">${esc(c.term)}</div>` : ''}
+      ${c.context ? `<div class="int-cult-ctx">出处 · ${esc(c.context)}</div>` : ''}
+      ${c.explanation ? `<div class="int-cult-expl">${nl2br(c.explanation)}</div>` : ''}
+    </div>`).join('') : '<div class="int-empty">本课暂无文化背景。</div>';
+})();
+
+/* ---------------- post-reading ---------------- */
+(function renderPost(){
+  const parts = [];
+
+  if (post.predictionCheck)
+    parts.push(`<div class="post-card"><h3>1 · 回看预测 · ¿Acertaste?</h3>
+      <p class="q" style="font-size:15px;font-weight:600;">${esc(post.predictionCheck.prompt || '')}</p>
+      <textarea placeholder="${esc(post.predictionCheck.placeholder || '')}"></textarea></div>`);
+
+  if (post.speaking)
+    parts.push(`<div class="post-card"><h3>2 · 开口说 · Hablar</h3>
+      ${post.speaking.hint ? `<p class="section-hint">${esc(post.speaking.hint)}</p>` : ''}
+      ${(post.speaking.prompts || []).map((p, i) => `
+        <div class="speak-item">
+          <div class="q">${esc(p.prompt || '')}
+            <button type="button" class="tts" data-segid="post.speak.${i + 1}" title="听一遍 · Escuchar">🔊</button></div>
+          <textarea placeholder="${esc(p.placeholder || '')}"></textarea>
+        </div>`).join('')}</div>`);
+
+  if (post.textToSelf)
+    parts.push(`<div class="post-card"><h3>3 · 联系自己 · Yo</h3>
+      <p class="q" style="font-size:15px;font-weight:600;">${esc(post.textToSelf.prompt || '')}</p>
+      <textarea placeholder="${esc(post.textToSelf.placeholder || '')}"></textarea></div>`);
+
+  if (post.textToWorld){
+    const sides = (post.textToWorld.sides || []).map(s =>
+      `<button type="button" class="side-btn" data-side="${esc(s.id)}">${esc(s.label)}</button>`).join('');
+    parts.push(`<div class="post-card"><h3>4 · 联系世界 · El mundo</h3>
+      <p class="q" style="font-size:15px;font-weight:600;">${esc(post.textToWorld.prompt || '')}</p>
+      <div class="side-btns">${sides}</div>
+      <textarea placeholder="${esc(post.textToWorld.placeholder || '')}"></textarea>
+      ${post.textToWorld.extensionPrompt ? `<p class="section-hint" style="margin-top:12px;">${esc(post.textToWorld.extensionPrompt)}</p>` : ''}</div>`);
+  }
+
+  if (post.exitTicket)
+    parts.push(`<div class="post-card"><h3>5 · 离场券 · Boleto de salida</h3>
+      <p class="q" style="font-size:15px;font-weight:600;">${esc(post.exitTicket.prompt || '')}
+        ${tipBtn(post.exitTicket.tipKey, '给家长的提示')}</p>
+      <textarea placeholder="${esc(post.exitTicket.placeholder || '')}"></textarea></div>`);
+
+  el('panel-post').innerHTML =
+    `<div class="section-head"><span class="section-num">✓</span><h2 class="section-title">读后 · Después de leer</h2></div>` +
+    `<p class="section-hint">不用写很长，说得出来就算过。</p>` + parts.join('') +
+    `<div class="stage-footer-nav"><button class="next-btn" data-goto="pre">回到读前 · Volver al inicio →</button></div>`;
+
+  el('panel-post').querySelectorAll('.side-btn').forEach(b =>
+    b.addEventListener('click', () => b.classList.toggle('on')));
+})();
+
+/* ---------------- stages & views ---------------- */
+function goStage(name){
+  document.querySelectorAll('.stage-tab').forEach(t => t.classList.toggle('active', t.dataset.stage === name));
+  document.querySelectorAll('.stage-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+  stopAudio();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function goView(name){
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.toggle('active', t.dataset.view === name));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + name));
+  stopAudio();
+}
+document.querySelectorAll('.stage-tab').forEach(t => t.addEventListener('click', () => goStage(t.dataset.stage)));
+document.querySelectorAll('.view-tab').forEach(t => t.addEventListener('click', () => goView(t.dataset.view)));
+document.querySelectorAll('.next-btn').forEach(b => b.addEventListener('click', () => goStage(b.dataset.goto)));
+
+/* ---------------- speaker buttons (generic) ---------------- */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.tts');
+  if (!btn) return;
+  e.stopPropagation();
+  playSeg(btn.dataset.segid, btn);
+});
+
+/* ---------------- teacher tips ---------------- */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-tip]');
+  if (!btn) return;
+  const key = btn.dataset.tip;
+  el('modalText').textContent = tips[key] || '（本课未提供该处提示）';
+  el('modalBackdrop').classList.add('open');
+});
+el('modalClose').addEventListener('click', () => el('modalBackdrop').classList.remove('open'));
+el('modalBackdrop').addEventListener('click', e => { if (e.target === el('modalBackdrop')) el('modalBackdrop').classList.remove('open'); });
+
+/* ---------------- export ---------------- */
+(function exportMenu(){
+  const btn = el('exportBtn'), menu = el('exportMenu');
+  if (!btn) return;
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(open));
+  });
+  document.addEventListener('click', () => { menu.classList.remove('open'); btn.setAttribute('aria-expanded','false'); });
+  menu.querySelectorAll('.export-item').forEach(item => item.addEventListener('click', () => {
+    menu.classList.remove('open');
+    if (item.dataset.export === 'pdf') window.print();
+    else {
+      const blob = new Blob([document.documentElement.outerHTML], { type:'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (meta.filenameStem || 'lesson') + '_Lectura_Lesson.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+  }));
+})();
+
+/* ---------------- boot ---------------- */
+document.body.classList.add('fonts-ready');
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => document.body.classList.add('fonts-ready'));
+renderBook();
+</script>
+</body>
+</html>

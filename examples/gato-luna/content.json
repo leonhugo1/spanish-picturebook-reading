@@ -1,0 +1,254 @@
+{
+  "meta": {
+    "titleEs": "El gato y la luna",
+    "titleZh": "猫与月亮",
+    "filenameStem": "gato-luna",
+    "lessonType": "spanish_picturebook_reading",
+    "objectives": [
+      "看懂绘本故事大意，能说出猫想做什么",
+      "掌握 el gato / la luna / la noche / el tejado 四个名词及其阴阳性",
+      "分清 ser 与 estar 的基本用法（es grande / está cerca）",
+      "能用 querer + 不定式 说一句自己的愿望"
+    ],
+    "timeEstimate": "读前 3 分钟 · 绘本精读 10 分钟 · 读后 5 分钟",
+    "footer": "西班牙语绘本精读 · Lectura guiada de cuento"
+  },
+  "pictureBook": {
+    "bookTitle": "El gato y la luna",
+    "level": "A1",
+    "pages": [
+      {
+        "page": 1,
+        "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNTYwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzEyMjAzRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFFMzU2MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTYwIiBmaWxsPSJ1cmwoI3NreSkiLz48Y2lyY2xlIGN4PSIxMCIgY3k9IjIwIiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjE0NyIgY3k9IjExMSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIyODQiIGN5PSIyMDIiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDIxIiBjeT0iMjkzIiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjU1OCIgY3k9Ijg0IiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjY5NSIgY3k9IjE3NSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI1MiIgY3k9IjI2NiIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIxODkiIGN5PSI1NyIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIzMjYiIGN5PSIxNDgiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDYzIiBjeT0iMjM5IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjYwMCIgY3k9IjMwIiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjczNyIgY3k9IjEyMSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI5NCIgY3k9IjIxMiIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIyMzEiIGN5PSIzMDMiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMzY4IiBjeT0iOTQiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNTA1IiBjeT0iMTg1IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjY0MiIgY3k9IjI3NiIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI3NzkiIGN5PSI2NyIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNTgiIHI9IjIuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMjczIiBjeT0iMjQ5IiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjQxMCIgY3k9IjQwIiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjU0NyIgY3k9IjEzMSIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI2ODQiIGN5PSIyMjIiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDEiIGN5PSIzMTMiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMTc4IiBjeT0iMTA0IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjMxNSIgY3k9IjE5NSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI2NDAiIGN5PSIxMTAiIHI9IjQ2IiBmaWxsPSIjRjdFOUM4Ii8+PGNpcmNsZSBjeD0iNjI4IiBjeT0iOTgiIHI9IjQ2IiBmaWxsPSIjMUUzNTYwIiBvcGFjaXR5PSIwLjkyIi8+PHJlY3QgeT0iNDMwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjEzMCIgZmlsbD0iIzBCMTUzMCIvPjxlbGxpcHNlIGN4PSIyNTAiIGN5PSI0NTIiIHJ4PSI2MiIgcnk9IjQwIiBmaWxsPSIjMjYzNzVFIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iNDI4IiByPSIzMCIgZmlsbD0iIzI2Mzc1RSIvPjxwYXRoIGQ9Ik0yNzggNDA0IGwtMTIgLTIyIGwyMiA4IHoiIGZpbGw9IiMyNjM3NUUiLz48cGF0aCBkPSJNMzIyIDQwNCBsMTIgLTIyIGwtMjIgOCB6IiBmaWxsPSIjMjYzNzVFIi8+PGNpcmNsZSBjeD0iMjkyIiBjeT0iNDI0IiByPSIzLjQiIGZpbGw9IiNGN0U5QzgiLz48Y2lyY2xlIGN4PSIzMTIiIGN5PSI0MjQiIHI9IjMuNCIgZmlsbD0iI0Y3RTlDOCIvPjwvc3ZnPg==",
+        "caption": "Página 1 · Es de noche",
+        "textEs": "Es de noche. El gato mira la luna.",
+        "textZh": "天黑了。猫看着月亮。",
+        "sentences": [
+          {
+            "es": "Es de noche.",
+            "zh": "天黑了。",
+            "grammar": [
+              "ser 的第三人称单数 es + de noche，固定说法「是夜晚」",
+              "noche 是阴性名词（la noche），记住搭配：de noche 在夜里"
+            ]
+          },
+          {
+            "es": "El gato mira la luna.",
+            "zh": "猫看着月亮。",
+            "grammar": [
+              "mirar 是 -ar 结尾的规则动词，第三人称单数 → mira",
+              "名词阴阳性对照：el gato（阳性）／ la luna（阴性）"
+            ]
+          }
+        ],
+        "note": "先看图再看字：问孩子「¿Qué ves?」你看到了什么？"
+      },
+      {
+        "page": 2,
+        "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNTYwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzEyMjAzRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFFMzU2MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTYwIiBmaWxsPSJ1cmwoI3NreSkiLz48Y2lyY2xlIGN4PSIxMCIgY3k9IjIwIiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjE0NyIgY3k9IjExMSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIyODQiIGN5PSIyMDIiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDIxIiBjeT0iMjkzIiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjU1OCIgY3k9Ijg0IiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjY5NSIgY3k9IjE3NSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI1MiIgY3k9IjI2NiIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIxODkiIGN5PSI1NyIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIzMjYiIGN5PSIxNDgiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDYzIiBjeT0iMjM5IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjYwMCIgY3k9IjMwIiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjczNyIgY3k9IjEyMSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI5NCIgY3k9IjIxMiIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIyMzEiIGN5PSIzMDMiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMzY4IiBjeT0iOTQiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNTA1IiBjeT0iMTg1IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjY0MiIgY3k9IjI3NiIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI3NzkiIGN5PSI2NyIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNTgiIHI9IjIuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMjczIiBjeT0iMjQ5IiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjQxMCIgY3k9IjQwIiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjU0NyIgY3k9IjEzMSIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI2ODQiIGN5PSIyMjIiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDEiIGN5PSIzMTMiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMTc4IiBjeT0iMTA0IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjMxNSIgY3k9IjE5NSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI2NDAiIGN5PSIxMTAiIHI9IjQ2IiBmaWxsPSIjRjdFOUM4Ii8+PGNpcmNsZSBjeD0iNjI4IiBjeT0iOTgiIHI9IjQ2IiBmaWxsPSIjMUUzNTYwIiBvcGFjaXR5PSIwLjkyIi8+PHJlY3QgeT0iNDMwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjEzMCIgZmlsbD0iIzBCMTUzMCIvPjxlbGxpcHNlIGN4PSI0MDAiIGN5PSI0NjAiIHJ4PSI3MCIgcnk9IjQ0IiBmaWxsPSIjMjYzNzVFIi8+PGNpcmNsZSBjeD0iNDAwIiBjeT0iNDIwIiByPSIzNCIgZmlsbD0iIzI2Mzc1RSIvPjxwYXRoIGQ9Ik0zNzQgMzk0IGwtMTQgLTI0IGwyNCA5IHoiIGZpbGw9IiMyNjM3NUUiLz48cGF0aCBkPSJNNDI2IDM5NCBsMTQgLTI0IGwtMjQgOSB6IiBmaWxsPSIjMjYzNzVFIi8+PGNpcmNsZSBjeD0iMzkwIiBjeT0iNDE2IiByPSIzLjgiIGZpbGw9IiNGN0U5QzgiLz48Y2lyY2xlIGN4PSI0MTIiIGN5PSI0MTYiIHI9IjMuOCIgZmlsbD0iI0Y3RTlDOCIvPjxwYXRoIGQ9Ik00MDAgNDUyIHEyNiAtNDYgNjAgLTYyIiBzdHJva2U9IiMyNjM3NUUiIHN0cm9rZS13aWR0aD0iOSIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTQ4NCAzNzIgbDQwIC00MCIgc3Ryb2tlPSIjN0I4REI1IiBzdHJva2Utd2lkdGg9IjIuNCIgc3Ryb2tlLWRhc2hhcnJheT0iNiA3IiBmaWxsPSJub25lIi8+PC9zdmc+",
+        "caption": "Página 2 · Quiere tocarla",
+        "textEs": "La luna es muy grande. El gato quiere tocarla.",
+        "textZh": "月亮很大。猫想摸摸它。",
+        "sentences": [
+          {
+            "es": "La luna es muy grande.",
+            "zh": "月亮很大。",
+            "grammar": [
+              "ser 表示固有属性：es grande（它本来就是大的）",
+              "muy 放在形容词前，不能修饰动词"
+            ]
+          },
+          {
+            "es": "El gato quiere tocarla.",
+            "zh": "猫想摸摸它。",
+            "grammar": [
+              "querer + 动词原形：quiere tocar → quiere tocarla",
+              "直接宾语代词 la 后置并连写：tocar + la = tocarla，指 la luna"
+            ]
+          }
+        ]
+      },
+      {
+        "page": 3,
+        "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNTYwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InNreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzEyMjAzRiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFFMzU2MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNTYwIiBmaWxsPSJ1cmwoI3NreSkiLz48Y2lyY2xlIGN4PSIxMCIgY3k9IjIwIiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjE0NyIgY3k9IjExMSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIyODQiIGN5PSIyMDIiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDIxIiBjeT0iMjkzIiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjU1OCIgY3k9Ijg0IiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjY5NSIgY3k9IjE3NSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI1MiIgY3k9IjI2NiIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIxODkiIGN5PSI1NyIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIzMjYiIGN5PSIxNDgiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDYzIiBjeT0iMjM5IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjYwMCIgY3k9IjMwIiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjczNyIgY3k9IjEyMSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI5NCIgY3k9IjIxMiIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIyMzEiIGN5PSIzMDMiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMzY4IiBjeT0iOTQiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNTA1IiBjeT0iMTg1IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjY0MiIgY3k9IjI3NiIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI3NzkiIGN5PSI2NyIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNTgiIHI9IjIuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMjczIiBjeT0iMjQ5IiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjQxMCIgY3k9IjQwIiByPSIxLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjU0NyIgY3k9IjEzMSIgcj0iMi42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI2ODQiIGN5PSIyMjIiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iNDEiIGN5PSIzMTMiIHI9IjEuNiIgZmlsbD0iI0Y3RTlDOCIgb3BhY2l0eT0iMC45Ii8+PGNpcmNsZSBjeD0iMTc4IiBjeT0iMTA0IiByPSIyLjYiIGZpbGw9IiNGN0U5QzgiIG9wYWNpdHk9IjAuOSIvPjxjaXJjbGUgY3g9IjMxNSIgY3k9IjE5NSIgcj0iMS42IiBmaWxsPSIjRjdFOUM4IiBvcGFjaXR5PSIwLjkiLz48Y2lyY2xlIGN4PSI2NDAiIGN5PSIxMTAiIHI9Ijc0IiBmaWxsPSIjRjdFOUM4Ii8+PGNpcmNsZSBjeD0iNjEyIiBjeT0iODgiIHI9Ijc0IiBmaWxsPSIjMUUzNTYwIiBvcGFjaXR5PSIwLjkyIi8+PHJlY3QgeT0iMzYwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzBCMTUzMCIvPjxwYXRoIGQ9Ik0xMjAgNDMwIEw0MDAgMzAwIEw2ODAgNDMwIEw2ODAgNTYwIEwxMjAgNTYwIHoiIGZpbGw9IiMzQTJCNDQiLz48cGF0aCBkPSJNMTIwIDQzMCBMNDAwIDMwMCBMNjgwIDQzMCIgc3Ryb2tlPSIjNUI0MzYzIiBzdHJva2Utd2lkdGg9IjciIGZpbGw9Im5vbmUiLz48ZWxsaXBzZSBjeD0iNDAwIiBjeT0iMzMwIiByeD0iNTgiIHJ5PSIzNiIgZmlsbD0iIzI2Mzc1RSIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjI5NiIgcj0iMjgiIGZpbGw9IiMyNjM3NUUiLz48cGF0aCBkPSJNMzc4IDI3NCBsLTEyIC0yMCBsMjEgOCB6IiBmaWxsPSIjMjYzNzVFIi8+PHBhdGggZD0iTTQyMiAyNzQgbDEyIC0yMCBsLTIxIDggeiIgZmlsbD0iIzI2Mzc1RSIvPjxjaXJjbGUgY3g9IjM5MCIgY3k9IjI5MiIgcj0iMy40IiBmaWxsPSIjRjdFOUM4Ii8+PGNpcmNsZSBjeD0iNDEwIiBjeT0iMjkyIiByPSIzLjQiIGZpbGw9IiNGN0U5QzgiLz48cGF0aCBkPSJNNDAwIDM0MCBxMjIgLTMwIDM0IC01NCIgc3Ryb2tlPSIjMjYzNzVFIiBzdHJva2Utd2lkdGg9IjgiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==",
+        "caption": "Página 3 · Al tejado",
+        "textEs": "El gato sube al tejado. ¡Ahora está más cerca!",
+        "textZh": "猫爬上屋顶。现在更近了！",
+        "sentences": [
+          {
+            "es": "El gato sube al tejado.",
+            "zh": "猫爬上屋顶。",
+            "grammar": [
+              "subir 是 -ir 结尾的规则动词，第三人称单数 → sube",
+              "a + el 缩合成 al：sube a + el tejado → sube al tejado"
+            ]
+          },
+          {
+            "es": "¡Ahora está más cerca!",
+            "zh": "现在更近了！",
+            "grammar": [
+              "estar 表示暂时状态或位置，与 ser 的固有属性相对",
+              "más + 形容词 = 比较级：más cerca 更近",
+              "西语的感叹号和问号成对出现，句首要写倒置的 ¡"
+            ]
+          }
+        ]
+      }
+    ],
+    "wordCards": [
+      {
+        "es": "el gato",
+        "zh": "猫",
+        "pos": "m.",
+        "emoji": "🐱",
+        "exampleEs": "El gato mira la luna."
+      },
+      {
+        "es": "la luna",
+        "zh": "月亮",
+        "pos": "f.",
+        "emoji": "🌙",
+        "exampleEs": "La luna es muy grande."
+      },
+      {
+        "es": "la noche",
+        "zh": "夜晚",
+        "pos": "f.",
+        "emoji": "🌃",
+        "exampleEs": "Es de noche."
+      },
+      {
+        "es": "el tejado",
+        "zh": "屋顶",
+        "pos": "m.",
+        "emoji": "🏠",
+        "exampleEs": "El gato sube al tejado."
+      }
+    ]
+  },
+  "preReading": {
+    "leadIn": {
+      "prompt": "看封面猜一猜：这只猫在夜里看着什么？它在想什么？¿Qué mira el gato?",
+      "placeholder": "用中文写就行，猜错也没关系…"
+    },
+    "prediction": {
+      "hint": "先不要翻页，看图猜故事走向。",
+      "prompt": "你觉得猫接下来会做什么？¿Qué va a hacer el gato?",
+      "placeholder": "我猜它会……"
+    },
+    "keyWords": [
+      {
+        "word": "la noche",
+        "meaning": "夜晚",
+        "example": "Es de noche. 天黑了。"
+      },
+      {
+        "word": "el tejado",
+        "meaning": "屋顶",
+        "example": "El gato sube al tejado."
+      },
+      {
+        "word": "querer",
+        "meaning": "想要",
+        "example": "Quiere tocar la luna."
+      },
+      {
+        "word": "cerca",
+        "meaning": "近的",
+        "example": "Está más cerca. 更近了。"
+      }
+    ]
+  },
+  "whileReading": {
+    "intensiveReading": {
+      "deepVocabulary": [
+        {
+          "word": "mirar",
+          "pos": "v.",
+          "meaningZh": "看、注视（比 ver 更强调主动去看）",
+          "collocations": [
+            "mirar la luna",
+            "mira aquí"
+          ],
+          "note": "ver 是「看见」（无意识），mirar 是「看」（有意识）。"
+        },
+        {
+          "word": "tocar",
+          "pos": "v.",
+          "meaningZh": "触摸、碰",
+          "collocations": [
+            "tocar la luna",
+            "tocarla"
+          ],
+          "note": "代词式用法 tocarla 是绘本里最常见的宾语代词后置写法。"
+        },
+        {
+          "word": "subir",
+          "pos": "v.",
+          "meaningZh": "上、爬上",
+          "collocations": [
+            "subir al tejado",
+            "subir la escalera"
+          ],
+          "note": "与 bajar（下）成对，都是 -ir 规则动词。"
+        }
+      ],
+      "culturalNotes": [
+        {
+          "term": "¿Qué ves? 的亲子共读用法",
+          "context": "西班牙语亲子阅读中常见的提问",
+          "explanation": "西语绘本共读习惯先图后字：大人指着图问 ¿Qué ves?（你看到什么），孩子用单词回答即可，不要求整句。这样可以避免孩子一开始就被语法劝退。"
+        },
+        {
+          "term": "阴阳性怎么记才不痛苦",
+          "context": "el gato / la luna / la noche / el tejado",
+          "explanation": "不要背规则表，要连着冠词一起记单词：el gato、la luna。朗读时冠词自然带出，比单独记「luna 是阴性」有效得多。"
+        }
+      ]
+    }
+  },
+  "postReading": {
+    "predictionCheck": {
+      "prompt": "你之前的猜测对了吗？哪里不一样？",
+      "placeholder": "我猜的是……，其实是……"
+    },
+    "speaking": {
+      "hint": "先照着句型说，再换成自己的内容。",
+      "prompts": [
+        {
+          "prompt": "¿Qué mira el gato? 猫在看什么？",
+          "placeholder": "El gato mira…"
+        },
+        {
+          "prompt": "¿Qué quiere hacer? 它想做什么？",
+          "placeholder": "Quiere…"
+        },
+        {
+          "prompt": "¿Y tú? ¿Qué quieres hacer esta noche? 你呢？今晚想做什么？",
+          "placeholder": "Quiero…"
+        }
+      ]
+    },
+    "textToSelf": {
+      "prompt": "你有没有特别想要却够不到的东西？用它说一句西语：Quiero…",
+      "placeholder": "Quiero…"
+    },
+    "textToWorld": {
+      "prompt": "在很多文化里，月亮都被写进童谣。你知道哪首和月亮有关的儿歌或诗？",
+      "sides": [
+        {
+          "id": "china",
+          "label": "中国的月亮童谣"
+        },
+        {
+          "id": "spain",
+          "label": "西语国家的月亮童谣"
+        }
+      ]
+    },
+    "exitTicket": {
+      "prompt": "用一句话说出今天学到的：我最想记住的一个词是＿＿，因为＿＿。",
+      "placeholder": "我最想记住…"
+    }
+  }
+}

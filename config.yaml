@@ -1,0 +1,24 @@
+name: spanish-picturebook-reading
+version: 1.0.0
+description: >-
+  Spanish picture-book reading courseware: turn a scanned picture book into a
+  single-file interactive HTML lesson (per-page art, Spanish text, Chinese
+  subtitles, neural TTS, sentence grammar, click-to-hear word cards) plus a
+  printable worksheet with an answer key for parents.
+category: education
+language: es
+license: MIT
+author: leonhugo1
+homepage: https://github.com/leonhugo1/spanish-picturebook-reading
+
+triggers:
+  - 西语绘本
+  - 西班牙语绘本
+  - 绘本精读
+  - 西语精读
+  - 西语阅读课件
+  - cuento
+  - lectura guiada
+  - libro ilustrado
+  - spanish picture book
+  - spanish reading courseware

@@ -1,0 +1,12 @@
+name: spanish-picturebook-reading
+version: 1.0.0
+description: >-
+  Turn a Spanish picture book (page photos, scans, or a PDF) into a single-file
+  interactive HTML reading lesson — per-page illustration, Spanish text with
+  Chinese subtitles, neural-voice narration, sentence-level grammar glosses and
+  click-to-hear word cards — plus a printable worksheet with a parent answer key.
+category: education
+language: es
+license: MIT
+author: leonhugo1
+homepage: https://github.com/leonhugo1/spanish-picturebook-reading
