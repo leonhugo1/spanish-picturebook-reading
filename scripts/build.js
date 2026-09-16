@@ -197,8 +197,20 @@ function buildLesson(content, outDir, audio) {
   const audioSegs = (audio && audio.segments) || {};
   const withAudio = Object.keys(audioSegs).length > 0;
   content.audio = audioSegs;
+  // Most clips are mp3; the Chinese explanation track may be AAC, so the player
+  // needs the type per segment rather than one hard-coded prefix.
+  content.audioMimes = (audio && audio.mimes) || {};
   content.audioMeta = withAudio
-    ? { voice: audio.voice, rate: audio.rate, count: audio.count, generatedAt: new Date().toISOString() }
+    ? {
+        voice: audio.voice,
+        cnVoice: (audio.voices && audio.voices.zh) || null,
+        rate: audio.rate,
+        count: audio.count,
+        // How many clips the content asked for. Equal to `count` unless a
+        // recording failed — validate.js compares the two.
+        planned: audio.planned || audio.count,
+        generatedAt: new Date().toISOString(),
+      }
     : { voice: null, count: 0, note: "no narration — rebuild with audio enabled" };
 
   const tpl = fs.readFileSync(TPL_LESSON, "utf8")

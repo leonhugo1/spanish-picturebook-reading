@@ -197,6 +197,11 @@
                 padding:10px 14px; border-radius:8px; margin-bottom:10px; }
   .int-grammar{ font-size:13px; line-height:1.75; color:var(--ocean-deep); }
   .int-grammar b{ color:var(--coral); }
+  /* The Chinese explanation track. Long clips (20–40 s), so the button keeps the
+     full play/pause state machine and sits at the top of the block. */
+  .int-say-row{ display:flex; align-items:flex-start; gap:12px; }
+  .int-say-body{ flex:1 1 auto; min-width:0; }
+  .int-say-row > .tts{ margin-top:1px; }
   .int-vocab{ background:var(--white); border:1px solid var(--line); border-radius:10px; padding:16px 20px; margin:0 0 12px;
               box-shadow:0 1px 0 rgba(31,53,71,.04); }
   .int-vocab-word{ font-family:'Fraunces',serif; font-size:24px; font-weight:600; color:var(--plum); }
@@ -359,6 +364,9 @@ const pre    = INITIAL_DATA.preReading || {};
 const deep   = (INITIAL_DATA.whileReading || {}).intensiveReading || {};
 const post   = INITIAL_DATA.postReading || {};
 const AUDIO  = INITIAL_DATA.audio || {};
+/* Most clips are mp3. The Chinese explanation track may be AAC (about 40 %
+   smaller), so the type is carried per segment instead of hard-coded. */
+const AUDIO_MIMES = INITIAL_DATA.audioMimes || {};
 
 /* ---------------- helpers ---------------- */
 function esc(s){ return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -399,12 +407,12 @@ function tipBtn(key, text){
 })();
 
 /* ---------------- audio engine (pre-recorded only) ---------------- */
-let curAudio = null, curBtn = null;
+let curAudio = null, curBtn = null, curMark = null;
 
 function setBtnState(btn, state){
   if (!btn) return;
   const map = {
-    idle:     { icon:'🔊', title:'朗读 · Escuchar' },
+    idle:     { icon: btn.dataset.idleIcon || '🔊', title: btn.dataset.idleTitle || '朗读 · Escuchar' },
     speaking: { icon:'⏸', title:'暂停 · Pausar' },
     paused:   { icon:'▶', title:'继续 · Continuar' },
   };
@@ -421,6 +429,7 @@ function stopAudio(){
     curAudio = null;
   }
   if (curBtn){ setBtnState(curBtn, 'idle'); curBtn = null; }
+  if (curMark){ curMark.classList.remove('speaking'); curMark = null; }
 }
 
 function flashNoAudio(btn, segId){
@@ -448,7 +457,7 @@ function playSeg(segId, btn){
   try {
     // data: URI keeps the file offline and avoids Blob-URL rejections in
     // stricter browser/privacy configurations. Never set crossOrigin here.
-    const a = new Audio('data:audio/mp3;base64,' + b64);
+    const a = new Audio('data:' + (AUDIO_MIMES[segId] || 'audio/mpeg') + ';base64,' + b64);
     a.preload = 'auto';
     a.onended = () => { if (curAudio === a) curAudio = null; if (curBtn === btn) setBtnState(btn, 'idle'); };
     a.onerror = () => { if (curAudio === a) curAudio = null; flashNoAudio(btn, segId); };
@@ -660,38 +669,69 @@ document.addEventListener('keydown', e => {
 (function renderDeep(){
   // Sentence-by-sentence is folded in from the book pages, so authors never
   // have to retype the same sentences.
+  //
+  // Every Chinese block carries its own explanation clip, recorded with a
+  // Chinese voice (deep.zh / deep.gram / deep.vocab / deep.cult). The Spanish
+  // line above it stays silent here — it already has its own narration in the
+  // picture-book view, and this tab exists to be explained, not recited.
+  const sayBtn = (segId) =>
+    `<button type="button" class="tts" data-segid="${segId}" data-idle-icon="🗣"` +
+    ` data-idle-title="听中文讲解 · Explicación en chino"` +
+    ` title="听中文讲解 · Explicación en chino">🗣</button>`;
   const sent = el('deepSentences');
   const rows = [];
   pages.forEach((p, i) => {
     const n = pageNo(p, i);
     linesOf(p).forEach((s, j) => {
+      const k = j + 1;
       const g = Array.isArray(s.grammar) && s.grammar.length
-        ? `<div class="int-grammar"><b>语法/词法 ·</b><br>${s.grammar.map(x => nl2br(x)).join('<br>')}</div>` : '';
+        ? `<div class="int-grammar"><div class="int-say-row">
+             <div class="int-say-body"><b>语法/词法 ·</b><br>${s.grammar.map(x => nl2br(x)).join('<br>')}</div>
+             ${sayBtn(`deep.gram.${n}.${k}`)}
+           </div></div>` : '';
       rows.push(`<div class="int-sent">
-          <div class="int-sent-meta"><span class="int-sent-para">Página ${n} · 第 ${j + 1} 句</span></div>
+          <div class="int-sent-meta"><span class="int-sent-para">Página ${n} · 第 ${k} 句</span></div>
           ${s.es ? `<div class="int-sent-es">${nl2br(s.es)}</div>` : ''}
-          ${s.zh ? `<div class="int-sent-zh">译 · ${nl2br(s.zh)}</div>` : ''}${g}</div>`);
+          ${s.zh ? `<div class="int-sent-zh"><div class="int-say-row">
+              <div class="int-say-body">译 · ${nl2br(s.zh)}</div>
+              ${sayBtn(`deep.zh.${n}.${k}`)}
+            </div></div>` : ''}${g}</div>`);
     });
   });
   sent.innerHTML = rows.length ? rows.join('') : '<div class="int-empty">本课暂无逐句精讲。</div>';
 
   const dv = deep.deepVocabulary || [];
-  el('deepVocab').innerHTML = dv.length ? dv.map(v => `
-    <div class="int-vocab">
-      <div><span class="int-vocab-word">${esc(v.word || '')}</span>${v.pos ? `<span class="int-vocab-pos">${esc(v.pos)}</span>` : ''}</div>
-      ${v.meaningZh ? `<div class="int-vocab-zh">${esc(v.meaningZh)}</div>` : ''}
-      ${Array.isArray(v.collocations) && v.collocations.length
-        ? `<div class="int-vocab-line"><b>搭配 ·</b> ${v.collocations.map(c => esc(c)).join(' · ')}</div>` : ''}
-      ${v.note ? `<div class="int-vocab-line"><b>延伸 ·</b> ${esc(v.note)}</div>` : ''}
-    </div>`).join('') : '<div class="int-empty">本课暂无重点词深挖。</div>';
+  el('deepVocab').innerHTML = dv.length ? dv.map((v, i) => `
+    <div class="int-vocab"><div class="int-say-row">
+      <div class="int-say-body">
+        <div><span class="int-vocab-word">${esc(v.word || '')}</span>${v.pos ? `<span class="int-vocab-pos">${esc(v.pos)}</span>` : ''}</div>
+        ${v.meaningZh ? `<div class="int-vocab-zh">${esc(v.meaningZh)}</div>` : ''}
+        ${Array.isArray(v.collocations) && v.collocations.length
+          ? `<div class="int-vocab-line"><b>搭配 ·</b> ${v.collocations.map(c => esc(c)).join(' · ')}</div>` : ''}
+        ${v.note ? `<div class="int-vocab-line"><b>延伸 ·</b> ${esc(v.note)}</div>` : ''}
+      </div>${sayBtn(`deep.vocab.${i}`)}
+    </div></div>`).join('') : '<div class="int-empty">本课暂无重点词深挖。</div>';
 
   const cn = deep.culturalNotes || [];
-  el('deepCulture').innerHTML = cn.length ? cn.map(c => `
-    <div class="int-cult">
-      ${c.term ? `<div class="int-cult-term">${esc(c.term)}</div>` : ''}
-      ${c.context ? `<div class="int-cult-ctx">出处 · ${esc(c.context)}</div>` : ''}
-      ${c.explanation ? `<div class="int-cult-expl">${nl2br(c.explanation)}</div>` : ''}
-    </div>`).join('') : '<div class="int-empty">本课暂无文化背景。</div>';
+  el('deepCulture').innerHTML = cn.length ? cn.map((c, i) => `
+    <div class="int-cult"><div class="int-say-row">
+      <div class="int-say-body">
+        ${c.term ? `<div class="int-cult-term">${esc(c.term)}</div>` : ''}
+        ${c.context ? `<div class="int-cult-ctx">出处 · ${esc(c.context)}</div>` : ''}
+        ${c.explanation ? `<div class="int-cult-expl">${nl2br(c.explanation)}</div>` : ''}
+      </div>${sayBtn(`deep.cult.${i}`)}
+    </div></div>`).join('') : '<div class="int-empty">本课暂无文化背景。</div>';
+
+  // Bind the explanation buttons once the markup exists. Unlike the word-card
+  // taps (which fire and forget), these keep the full play/pause state machine:
+  // an explanation clip can run half a minute.
+  ['deepSentences', 'deepVocab', 'deepCulture'].forEach(id => {
+    const host = el(id);
+    if (!host) return;
+    host.querySelectorAll('.tts[data-segid]').forEach(btn => {
+      btn.addEventListener('click', () => playSeg(btn.dataset.segid, btn));
+    });
+  });
 })();
 
 /* ---------------- post-reading ---------------- */

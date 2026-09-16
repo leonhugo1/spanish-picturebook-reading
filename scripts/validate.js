@@ -102,6 +102,28 @@ const LESSON_MARKUP = [
   "data-segid",
 ];
 
+/**
+ * How many Chinese explanation blocks the handout will render. Mirrors the way
+ * the lesson template walks the pages (a page with no `sentences` becomes one
+ * block from textEs / textZh).
+ */
+function countDeepBlocks(src) {
+  const deep = (src.whileReading || {}).intensiveReading || {};
+  let n = 0;
+  for (const p of (src.pictureBook || {}).pages || []) {
+    const lines = (Array.isArray(p.sentences) && p.sentences.length)
+      ? p.sentences
+      : (String(p.textEs || "").trim() ? [{ zh: p.textZh || "" }] : []);
+    for (const s of lines) {
+      if (String(s.zh || "").trim()) n++;
+      if (Array.isArray(s.grammar) && s.grammar.length) n++;
+    }
+  }
+  for (const v of deep.deepVocabulary || []) if (v.meaningZh || v.note) n++;
+  for (const c of deep.culturalNotes || []) if (String(c.explanation || "").trim()) n++;
+  return n;
+}
+
 function validateLesson() {
   const src = readJson(path.join(outDir, "source", "normalized_content.json"));
   if (!src) return;
@@ -175,10 +197,18 @@ function validateLesson() {
       fail("lesson has no narration (audio is empty) — edge-tts was probably unavailable; rebuild without --no-audio");
     }
   } else {
-    const expected = pages.length + pages.reduce((a, p) => a + (p.sentences || []).length, 0)
-      + (book.wordCards || []).length;
-    if (segCount < expected) {
-      note(`narration covers ${segCount} clips; pages + sentences + word cards alone need ${expected}`);
+    // gen_audio.py records how many clips the content asked for; a shortfall
+    // means a recording failed, which no other check would notice.
+    const planned = (src.audioMeta && src.audioMeta.planned) || 0;
+    if (planned && segCount < planned) {
+      fail(`narration is incomplete: ${segCount} clips embedded but the content needs ${planned} — re-run the build`);
+    }
+    const esCount = Object.keys(src.audio || {}).filter(k => !k.startsWith("deep.")).length;
+    if (esCount === 0) fail("no Spanish narration in the lesson");
+    const deepExpected = countDeepBlocks(src);
+    const deepCount = Object.keys(src.audio || {}).filter(k => k.startsWith("deep.")).length;
+    if (deepExpected && !deepCount) {
+      note(`the handout has ${deepExpected} Chinese explanation block(s) but no explanation audio — rebuild to record them`);
     }
   }
 

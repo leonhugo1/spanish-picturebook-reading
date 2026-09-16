@@ -39,6 +39,8 @@ child can move between lessons without hunting through folders — see
 - **Grammar notes per sentence** — gender, verb endings, `ser` vs `estar`, contractions. This is the part a picture book cannot teach by itself.
 - **Click-to-hear word cards**, each written with its article (`el gato`, not `gato`, so the gender is learned along with the word). Tap the card for the word; tap the example line under it to hear the same word inside a sentence.
 - **Intensive handout** that automatically gathers every sentence from every page, plus deep vocabulary and cultural notes.
+- **The handout is narrated too — in Chinese.** Every translation, grammar note, vocabulary entry and cultural note gets its own 🗣 button, so a child working alone can hear the explanation instead of only reading it. Long clips, so the button plays, pauses and resumes.
+- **Two voices, two jobs.** What the child *reads* is Spanish, spoken by a Spanish voice. What *explains* it is Chinese, spoken by a Chinese voice. A Chinese subtitle printed under a Spanish line is still never read aloud.
 - **Narration is pre-recorded neural TTS**, embedded as base64. The browser's built-in voices are never used — they sound robotic and differ wildly between devices. If a clip is missing you get a red 🔇, never a robot.
 
 ### The worksheet
@@ -175,9 +177,9 @@ node scripts/smoke_worksheet.js out/*_Cuaderno_Worksheet.html /tmp/ak
 python3 scripts/make_index.py <library-root> --books-dir <folder of source PDFs>
 ```
 
-`--incremental-audio` compares each segment's text by hash and only re-records what changed. On a typical 10-page book that is 50-odd clips; editing an illustration or a Chinese gloss re-records **zero** of them, so a rebuild takes under a second instead of minutes.
+`--incremental-audio` compares each segment's text by hash and only re-records what changed. On a typical 10-page book that is 50-odd Spanish clips plus 30–40 Chinese ones; editing an illustration or a gloss re-records **zero** of them, and the two tracks invalidate independently — rewriting a grammar note costs one Chinese clip, never the Spanish narration.
 
-Only Spanish is ever sent to the speaker. Chinese is a subtitle and is never read aloud.
+Only Spanish is ever sent to the speaker **for the book itself** — a Chinese subtitle under a Spanish line is never read aloud. The handout's explanations are a separate, deliberately Chinese track.
 
 ---
 
@@ -214,7 +216,16 @@ button — the lesson itself keeps working. Copy the whole library folder.
 
 ## Narration voices
 
-Default is `es-ES-ElviraNeural` at rate `-12%` — slower than article pace, because the child is decoding a foreign language while following a highlighted line.
+Two tracks, two voices:
+
+| Track | Default | Rate | Override |
+|---|---|---|---|
+| Spanish — the book, word cards, speaking prompts | `es-ES-ElviraNeural` | `-12%` | `EDGE_TTS_VOICE` |
+| Chinese — the handout's explanations | `zh-CN-XiaoxiaoNeural` | `+0%` | `EDGE_TTS_CN_VOICE` |
+
+Spanish runs slower than article pace, because the child is decoding a foreign language while following a highlighted line. Chinese keeps a normal pace — it is the child's first language.
+
+Spanish voices:
 
 | Voice | Accent |
 |---|---|
@@ -225,8 +236,13 @@ Default is `es-ES-ElviraNeural` at rate `-12%` — slower than article pace, bec
 | `es-AR-ElenaNeural` | Rioplatense, female |
 | `es-US-PalomaNeural` | US Spanish, female |
 
+Chinese voices: `zh-CN-XiaoxiaoNeural` (default), `zh-CN-YunxiNeural`, `zh-CN-XiaoyiNeural`. Microsoft's *Multilingual* voices (`zh-CN-XiaoxiaoMultilingualNeural`) are not available on the free edge-tts endpoint — asking for one raises `NoAudioReceived`.
+
+Chinese clips are re-encoded to 24 kbps AAC where `afconvert` exists (macOS ships it), cutting them about 40 %. Set `EDGE_TTS_CN_CODEC=mp3` to keep everything mp3 and make builds byte-identical across platforms.
+
 ```bash
 EDGE_TTS_VOICE=es-MX-DaliaNeural node scripts/build.js content.json worksheet.json out/
+EDGE_TTS_CN_VOICE=zh-CN-YunxiNeural node scripts/build.js content.json worksheet.json out/
 ```
 
 ---

@@ -38,6 +38,8 @@
 - **逐句语法讲解** —— 阴阳性、动词变位、`ser` 与 `estar`、缩合形式。这是绘本本身教不了的部分。
 - **可点击发声单词卡**，名词一律连着冠词写（`el gato`，不是 `gato`），性别跟着词一起记。点卡片读单词，点卡片下方的例句读整句 —— 听这个词在句子里怎么用。
 - **精读讲义**自动把每一页的每一句汇总到一起，另附重点词深挖与文化背景。
+- **讲义本身也配音 —— 用中文。** 每一条译文、语法讲解、重点词、文化背景都带一个 🗣 按钮，孩子自学时**能听讲解**，而不是只能读。讲解较长，按钮支持播放 / 暂停 / 继续。
+- **两套音轨，两种音色。** 孩子要**读**的是西语，用西语音色；**解释**它的是中文，用中文音色。西语行下面的中文字幕仍然永远不配音。
 - **配音是预录的神经语音**，以 base64 内嵌。**绝不使用浏览器自带语音** —— 那种声音机械，而且不同设备差异极大。缺一段就闪红 🔇，不会退回机器人声。
 
 ### 练习册
@@ -171,9 +173,9 @@ node scripts/smoke_worksheet.js out/*_Cuaderno_Worksheet.html /tmp/ak
 python3 scripts/make_index.py <课程库根目录> --books-dir <原书 PDF 目录>
 ```
 
-`--incremental-audio` 按每段文本的指纹比对，只重录改动过的句子。一本 10 页绘本大约 50 段配音：改插图、改中文译文**一段都不会重录**，重建从几分钟降到一秒以内。
+`--incremental-audio` 按每段文本的指纹比对，只重录改动过的句子。一本 10 页绘本大约 50 段西语配音加 30–40 段中文讲解：改插图、改译文**一段都不会重录**；而且两条音轨**各自失效**——改一句语法讲解只重录那一段中文，不会牵动整条西语音轨。
 
-**只有西语会进扬声器。** 中文是字幕，永远不配音。
+**绘本本身仍然只有西语进扬声器** —— 西语行下面的中文字幕永远不配音。精讲讲义的讲解是另一条独立的、刻意用中文的音轨。
 
 ---
 
@@ -207,7 +209,16 @@ python3 scripts/make_index.py <课程库根目录> --books-dir <原书 PDF 目�
 
 ## 配音音色
 
-默认 `es-ES-ElviraNeural`，语速 `-12%` —— 比朗读文章更慢，因为孩子在跟读一句用外语写的、被高亮标出的句子。
+两套音轨，两种音色：
+
+| 音轨 | 默认 | 语速 | 覆盖方式 |
+|---|---|---|---|
+| 西语 —— 绘本、单词卡、跟读例句 | `es-ES-ElviraNeural` | `-12%` | `EDGE_TTS_VOICE` |
+| 中文 —— 精讲讲义的讲解 | `zh-CN-XiaoxiaoNeural` | `+0%` | `EDGE_TTS_CN_VOICE` |
+
+西语比朗读文章更慢，因为孩子要一边跟读一边看高亮的外语句子；中文保持正常语速，那是母语，而且讲解本身信息密度已经很高。
+
+西语音色：
 
 | 音色 | 口音 |
 |---|---|
@@ -218,8 +229,13 @@ python3 scripts/make_index.py <课程库根目录> --books-dir <原书 PDF 目�
 | `es-AR-ElenaNeural` | 阿根廷，女 |
 | `es-US-PalomaNeural` | 美国西语，女 |
 
+中文音色：`zh-CN-XiaoxiaoNeural`（默认）、`zh-CN-YunxiNeural`、`zh-CN-XiaoyiNeural`。微软的**多语言**音色（`zh-CN-XiaoxiaoMultilingualNeural`）在 edge-tts 免费通道上不可用，请求会报 `NoAudioReceived`。
+
+中文音频在系统带 `afconvert` 时（macOS 自带）会重新编码成 24 kbps AAC，体积小约 40%。设 `EDGE_TTS_CN_CODEC=mp3` 可以全部保持 mp3，让不同平台的产物逐字节一致。
+
 ```bash
 EDGE_TTS_VOICE=es-MX-DaliaNeural node scripts/build.js content.json worksheet.json out/
+EDGE_TTS_CN_VOICE=zh-CN-YunxiNeural node scripts/build.js content.json worksheet.json out/
 ```
 
 ---

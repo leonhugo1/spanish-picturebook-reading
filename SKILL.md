@@ -2,15 +2,16 @@
 name: spanish-picturebook-reading
 description: Turn a Spanish picture book (page photos, scans, or a PDF) into a single-file interactive HTML reading lesson — per-page illustration, Spanish text with Chinese subtitles, neural-voice narration, sentence-level grammar glosses and click-to-hear word cards — plus a printable worksheet with a parent answer key. Use when the user wants a Spanish picture-book lesson, 西语绘本精读, 绘本精读课件, or a matching worksheet.
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
 ---
+
 # Spanish picture-book reading
 
 A picture book is driven by images, so the work here is not "article comprehension".
 It is **one page → one Spanish line → one Chinese line → the grammar behind it**.
 
 The audience is a Chinese-speaking child starting Spanish: the interface speaks
-Chinese, the book stays in Spanish, and Chinese is never spoken aloud.
+Chinese, the book stays in Spanish, and the explanation track is spoken Chinese.
 
 ## Deliverables — one command, two files
 
@@ -47,11 +48,30 @@ Both halves of a word card are narrated: tapping the card plays `book.word.{i}`,
 tapping the example sentence plays `book.wordex.{i}`. The example line is dead text
 without the second clip — the smoke test fails if it goes missing.
 
+The second view is the **intensive handout**, and it is narrated too — in Chinese,
+because that is what it is written in. Every Chinese block gets its own 🗣 button
+with the full play/pause state machine (a clip can run half a minute):
+
+```
+┌ Página 3 · 第 1 句 ──────────────────────┐
+│ Este es un alce.                         │  ← the Spanish stays silent here
+│ ┌──────────────────────────────────┐     │
+│ │ 译 · 这是一只驼鹿。          [🗣] │     │  ← deep.zh.{N}.{M}
+│ └──────────────────────────────────┘     │
+│ 语法/词法 ·                          [🗣] │  ← deep.gram.{N}.{M}
+│ este = 这个（阳性）…                      │
+└──────────────────────────────────────────┘
+   deep vocabulary [🗣]  ·  cultural notes [🗣]
+```
+
 ## Rules
 
-1. **Only Spanish reaches the speaker.** Chinese is a subtitle. All narration is
-   pre-recorded neural audio embedded as base64; browser system voices are never
-   used. A missing clip shows a red 🔇 instead.
+1. **Two tracks, two voices.** Anything the child has to *read* is Spanish and is
+   spoken by a Spanish voice; anything that *explains* it is Chinese and is spoken
+   by a Chinese voice. A Chinese subtitle printed under a Spanish line is still
+   never read aloud — the explanation track is its own recording, made from the
+   handout's own text. All narration is pre-recorded neural audio embedded as
+   base64; browser system voices are never used. A missing clip shows a red 🔇.
 2. **Picture first, then text.** Every page is "look, then read". Pre-reading
    questions should point at the illustration.
 3. **Explain in Chinese, name forms in Spanish.** Grammar notes are Chinese prose
@@ -182,12 +202,32 @@ Narration needs **Python 3 + edge-tts**; point `PYTHON` at the interpreter if it
 not on `PATH`. Without edge-tts the lesson builds silently — fine for a layout
 pass, not for delivery.
 
-Default voice is `es-ES-ElviraNeural` at rate `-12%` — slower than article pace,
-because the child is following a highlighted line in a foreign language. Override
-with `EDGE_TTS_VOICE` (`es-ES-AlvaroNeural`, `es-MX-DaliaNeural`, `es-AR-ElenaNeural`…).
+Two voices:
 
-A `--incremental-audio` rebuild on a ten-page book takes under a second instead of
-minutes: only segments whose Spanish text changed are re-recorded.
+| Track | Default | Rate | Override |
+|---|---|---|---|
+| Spanish (the book, word cards, speaking prompts) | `es-ES-ElviraNeural` | `-12%` | `EDGE_TTS_VOICE` |
+| Chinese (the handout's explanations) | `zh-CN-XiaoxiaoNeural` | `+0%` | `EDGE_TTS_CN_VOICE` |
+
+The Spanish track is slower than article pace because the child is following a
+highlighted line in a foreign language. The Chinese track keeps a normal pace — it
+is the child's first language and the text is already dense.
+
+Other Spanish voices: `es-ES-AlvaroNeural`, `es-MX-DaliaNeural`, `es-AR-ElenaNeural`.
+Other Chinese voices: `zh-CN-YunxiNeural`, `zh-CN-XiaoyiNeural`. The Microsoft
+*Multilingual* voices (`zh-CN-XiaoxiaoMultilingualNeural`) are **not** available on
+the free edge-tts endpoint — requesting one raises `NoAudioReceived`.
+
+Chinese clips are re-encoded to 24 kbps AAC when `afconvert` exists (macOS ships
+it), which is ~40 % smaller; the lesson player reads each segment's type from
+`INITIAL_DATA.audioMimes`. Set `EDGE_TTS_CN_CODEC=mp3` to keep everything mp3 and
+make builds byte-identical across platforms. Expect the Chinese track to roughly
+double a lesson's file size (about +1.5 MB per ten-page book) — that is the cost of
+a narration the child can actually follow.
+
+A `--incremental-audio` rebuild takes seconds instead of minutes: only segments
+whose own text changed are re-recorded, and the two tracks invalidate separately —
+rewriting a grammar note costs one Chinese clip, never the whole Spanish narration.
 
 ## Step 3.5 · Audit the content — before building
 
@@ -286,6 +326,10 @@ button (the lesson itself is unaffected). Copy the whole library to keep it work
 | An edit silently did not land | several files edited in the same pass | re-read the changed lines afterwards; never assume the write succeeded |
 | The word-card example line is silent | only `book.word.{i}` was recorded, so the example has no clip | record `book.wordex.{i}` from `exampleEs` too — two taps, two clips |
 | The reading-aloud section asks for nothing repeatable | its clip was recorded from the Chinese lead-in, so the button spoke Chinese | give every speaking prompt an `es` sentence; *that* is what `post.speak.N` records |
+| The handout's explanation buttons are silent | the `deep.*` segments were never collected — the Chinese track is separate from the Spanish one | collect `deep.zh` / `deep.gram` / `deep.vocab` / `deep.cult` too, and let the smoke test assert the count matches |
+| Explanation audio loads but never plays | the clip was re-encoded (AAC) while the player still hard-coded `audio/mp3` | carry the type per segment in `INITIAL_DATA.audioMimes`; the smoke test loads one clip for real |
+| The explanation reads "★ … = …" aloud | the handout text is written for the eye | run it through `clean_speech()` in `gen_audio.py` before speaking |
+| A new Chinese clip re-records the whole Spanish track | one combined voice/fingerprint check invalidated everything | keep the two tracks independent: invalidate per language, on voice *and* codec |
 
 ## Boundaries
 
@@ -295,3 +339,5 @@ button (the lesson itself is unaffected). Copy the whole library to keep it work
   need to, then re-run the smoke tests.
 - Do not invent the book's text. Transcribe it.
 - The finished lesson contains copyrighted pages. Personal use only.
+
+---

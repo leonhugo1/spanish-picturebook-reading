@@ -72,6 +72,29 @@ async function main() {
       speakPrompts: (DATA?.postReading?.speaking?.prompts || []).length,
       speakLines: qa(".speak-es").length,
       speakClips: Object.keys(DATA?.audio || {}).filter(k => k.startsWith("post.speak.")).length,
+      // The intensive handout is explained aloud, in Chinese. Every Chinese
+      // block needs its own clip; the expected count is derived from the data
+      // the same way the template derives it.
+      sayButtons: qa(".int-say-row > .tts[data-segid]").length,
+      saySegidsOk: qa(".int-say-row > .tts[data-segid]")
+        .filter(b => /^deep\.(zh|gram|vocab|cult)\./.test(b.dataset.segid || "")).length,
+      sayExpected: (() => {
+        const deep = DATA?.whileReading?.intensiveReading || {};
+        let n = 0;
+        for (const p of DATA?.pictureBook?.pages || []) {
+          const lines = (Array.isArray(p.sentences) && p.sentences.length)
+            ? p.sentences
+            : (String(p.textEs || "").trim() ? [{ zh: p.textZh || "" }] : []);
+          for (const s of lines) {
+            if (s.zh) n++;
+            if (Array.isArray(s.grammar) && s.grammar.length) n++;
+          }
+        }
+        n += (deep.deepVocabulary || []).filter(v => v.meaningZh || v.note).length;
+        n += (deep.culturalNotes || []).filter(c => c.explanation).length;
+        return n;
+      })(),
+      sayClips: Object.keys(DATA?.audio || {}).filter(k => k.startsWith("deep.")).length,
     };
   });
 
@@ -105,6 +128,33 @@ async function main() {
     if (!c) return { clicked: false };
     c.click();
     return { clicked: true, hasClass: c.classList.contains("speaking") };
+  });
+
+  // Load a Chinese clip for real. This is the only check that the stored bytes
+  // and the recorded MIME type agree — the Chinese track may be AAC, and a
+  // mismatch stays invisible to every static assertion.
+  const audioProbe = await page.evaluate(async () => {
+    const DATA = typeof INITIAL_DATA === "undefined" ? null : INITIAL_DATA;
+    const mimes = DATA?.audioMimes || {};
+    const ids = Object.keys(DATA?.audio || {}).filter(k => k.startsWith("deep."));
+    if (!ids.length) return { tested: 0, ok: 0, seen: [] };
+    const probe = (id) => new Promise(res => {
+      const a = new Audio("data:" + (mimes[id] || "audio/mpeg") + ";base64," + DATA.audio[id]);
+      const done = r => { a.onloadedmetadata = a.onerror = null; res(r); };
+      a.onloadedmetadata = () => done({ ok: true, dur: a.duration });
+      a.onerror = () => done({ ok: false, dur: 0 });
+      setTimeout(() => done({ ok: false, dur: 0 }), 8000);
+      a.load();
+    });
+    const pick = [...new Set([ids[0], ids[Math.floor(ids.length / 2)], ids[ids.length - 1]])];
+    let ok = 0;
+    const seen = [];
+    for (const id of pick) {
+      const r = await probe(id);
+      if (r.ok) ok++;
+      seen.push({ id, mime: mimes[id] || "audio/mpeg", ok: r.ok, dur: +(r.dur || 0).toFixed(1) });
+    }
+    return { tested: pick.length, ok, seen };
   });
 
   if (shot) {
@@ -157,11 +207,19 @@ async function main() {
       first.speakPrompts === first.speakLines && first.speakPrompts > 0],
     ["speaking sentences are narrated",
       first.speakClips === first.speakPrompts || process.env.SMOKE_ALLOW_SILENT === "1"],
+    // Intensive handout: one Chinese explanation clip per Chinese block.
+    ["handout explanation buttons carry deep.* segids",
+      first.sayButtons > 0 && first.saySegidsOk === first.sayButtons &&
+      first.sayButtons === first.sayExpected],
+    ["handout explanation clips recorded",
+      first.sayClips === first.sayExpected || process.env.SMOKE_ALLOW_SILENT === "1"],
+    ["handout explanation audio loads (mime matches the bytes)",
+      audioProbe.tested === 0 || audioProbe.ok === audioProbe.tested],
     ["no page errors", errors.length === 0],
   ];
 
   console.log("=== probe ===");
-  console.log(JSON.stringify({ ...first, ...second }, null, 2));
+  console.log(JSON.stringify({ ...first, ...second, audioProbe }, null, 2));
 
   const failed = report("lesson checks", checks, errors);
   process.exit(failed === 0 ? 0 : 1);

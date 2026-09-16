@@ -138,26 +138,40 @@ Every speaker button plays a clip from `INITIAL_DATA.audio`, keyed by segment id
 `scripts/gen_audio.py` builds those clips from the content, so these ids are a
 contract between the two:
 
-| segId | Content |
-|---|---|
-| `book.page.{N}` | Whole page N, read continuously |
-| `book.sent.{N}.{M}` | Sentence M of page N |
-| `book.word.{i}` | Word card i (Spanish only) |
-| `book.wordex.{i}` | The example sentence on word card i |
-| `pre.kw.{i}` | Pre-reading key word i |
-| `post.speak.{i}` | Speaking prompt i (1-based) |
+| segId | Content | Voice |
+|---|---|---|
+| `book.page.{N}` | Whole page N, read continuously | Spanish |
+| `book.sent.{N}.{M}` | Sentence M of page N | Spanish |
+| `book.word.{i}` | Word card i (Spanish only) | Spanish |
+| `book.wordex.{i}` | The example sentence on word card i | Spanish |
+| `pre.kw.{i}` | Pre-reading key word i | Spanish |
+| `post.speak.{i}` | Speaking prompt i (1-based) | Spanish |
+| `deep.zh.{N}.{M}` | Chinese translation of sentence M on page N | **Chinese** |
+| `deep.gram.{N}.{M}` | The grammar/lexis notes for that sentence, joined with 。 | **Chinese** |
+| `deep.vocab.{i}` | Deep-vocabulary entry i: meaning + extended note | **Chinese** |
+| `deep.cult.{i}` | Cultural note i | **Chinese** |
 
 Rules:
 
-- **Spanish only.** Chinese is a subtitle; it is never spoken.
+- **Two tracks, two voices.** Anything the child has to *read* is Spanish and is
+  spoken by a Spanish voice. Anything that *explains* it is Chinese and is spoken
+  by a Chinese voice. Spanish narration is the only thing the book itself says —
+  a Chinese subtitle under a Spanish line is never read aloud.
+- The `deep.*` blocks mirror the lesson template's own fallback: a page with no
+  `sentences` is rendered as one block from `textEs` / `textZh`, so its segment is
+  `deep.zh.{N}.1`.
+- Speaker input is cleaned before recording: `★`, `·`, em dashes and `=` are marks
+  for the eye, not the ear. See `clean_speech()` in `gen_audio.py`.
 - Clips are pre-recorded and embedded as base64. Browser system voices are never
   used — they sound robotic and vary between devices. A missing clip shows a red
   🔇, never a fallback voice.
-- Changing an illustration, a Chinese gloss or a grammar note does **not** change
-  any segment text, so `--incremental-audio` re-records nothing.
-- Playback uses a `data:audio/mp3;base64,…` URL directly. Do not switch to Blob
-  URLs (rejected in some hardened browser configurations) and do not set
-  `crossOrigin` on a data URI.
+- Changing an illustration, a Chinese gloss or a grammar note re-records only that
+  step's Chinese clip; the Spanish narration is untouched, and vice versa.
+- Most clips are mp3. The Chinese track may be AAC (~40 % smaller) when the
+  platform provides a re-encoder, so the player reads the type per segment from
+  `INITIAL_DATA.audioMimes` instead of hard-coding one. Playback uses a
+  `data:<mime>;base64,…` URL directly. Do not switch to Blob URLs (rejected in
+  some hardened browser configurations) and do not set `crossOrigin` on a data URI.
 - `gen_audio.py` trims a partial MP3 frame off the tail. WebKit rejects padded
   files at EOF and the line goes silent; keep that trim if you touch the script.
 
