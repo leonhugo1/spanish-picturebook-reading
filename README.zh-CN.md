@@ -231,7 +231,7 @@ python3 scripts/make_index.py <课程库根目录> --books-dir <原书 PDF 目�
 
 中文音色：`zh-CN-XiaoxiaoNeural`（默认）、`zh-CN-YunxiNeural`、`zh-CN-XiaoyiNeural`。微软的**多语言**音色（`zh-CN-XiaoxiaoMultilingualNeural`）在 edge-tts 免费通道上不可用，请求会报 `NoAudioReceived`。
 
-中文音频在系统带 `afconvert` 时（macOS 自带）会重新编码成 24 kbps AAC，体积小约 40%。设 `EDGE_TTS_CN_CODEC=mp3` 可以全部保持 mp3，让不同平台的产物逐字节一致。
+两条音轨默认都是 edge-tts 直接输出的 mp3。中文讲解**可以**在系统带 `afconvert` 时（macOS 自带）重新编码成 24 kbps AAC、体积小约 40% —— 设 `EDGE_TTS_CN_CODEC=auto` 开启。**默认关闭是有意的**：多一种容器，就多一种"在没测过的设备上没声音"的可能。
 
 ```bash
 EDGE_TTS_VOICE=es-MX-DaliaNeural node scripts/build.js content.json worksheet.json out/

@@ -36,10 +36,11 @@ Spanish voices (set EDGE_TTS_VOICE to override):
 Chinese voice (set EDGE_TTS_CN_VOICE to override):
     zh-CN-XiaoxiaoNeural   (default)   zh-CN-YunxiNeural   zh-CN-XiaoyiNeural
 
-Chinese clips are re-encoded to 24 kbps AAC when `afconvert` is available
-(macOS ships it), which cuts their size by ~40%; edge-tts itself always emits
-48 kbps mp3. Set EDGE_TTS_CN_CODEC=mp3 to keep everything mp3 and make the
-output byte-identical across platforms.
+Chinese clips can optionally be re-encoded to 24 kbps AAC where `afconvert`
+exists (macOS ships it), which cuts their size by ~40%. It is **off by default**:
+AAC means a second container the player has to handle, and only mp3 is verified
+end to end. Set `EDGE_TTS_CN_CODEC=auto` (use a re-encoder when one is present)
+or `=m4a` (insist on AAC) to opt in.
 """
 from __future__ import annotations
 
@@ -69,8 +70,11 @@ PITCH = "+0Hz"
 VOLUME = "+0%"
 
 # Chinese clips are long (a whole lesson holds ~10 minutes of explanation), so
-# shrink them if the platform offers a re-encoder. "auto" → AAC when available.
-CN_CODEC = os.environ.get("EDGE_TTS_CN_CODEC", "auto")   # auto | mp3 | m4a
+# shrinking them is tempting. But every extra container is a way to lose sound on
+# a device nobody tested, and the Chinese text can never be verified by playing it
+# in one browser alone — so the safe mp3 edge-tts already produces is the default.
+# "auto" → AAC when a re-encoder exists; "m4a" → insist on AAC.
+CN_CODEC = os.environ.get("EDGE_TTS_CN_CODEC", "mp3")   # mp3 | auto | m4a
 AAC_BITRATE = "24000"
 MIME_MP3 = "audio/mpeg"
 MIME_AAC = "audio/mp4"

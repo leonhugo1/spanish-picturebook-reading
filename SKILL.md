@@ -2,7 +2,7 @@
 name: spanish-picturebook-reading
 description: Turn a Spanish picture book (page photos, scans, or a PDF) into a single-file interactive HTML reading lesson — per-page illustration, Spanish text with Chinese subtitles, neural-voice narration, sentence-level grammar glosses and click-to-hear word cards — plus a printable worksheet with a parent answer key. Use when the user wants a Spanish picture-book lesson, 西语绘本精读, 绘本精读课件, or a matching worksheet.
 metadata:
-  version: "1.3.0"
+  version: "1.3.1"
 ---
 
 # Spanish picture-book reading
@@ -218,12 +218,13 @@ Other Chinese voices: `zh-CN-YunxiNeural`, `zh-CN-XiaoyiNeural`. The Microsoft
 *Multilingual* voices (`zh-CN-XiaoxiaoMultilingualNeural`) are **not** available on
 the free edge-tts endpoint — requesting one raises `NoAudioReceived`.
 
-Chinese clips are re-encoded to 24 kbps AAC when `afconvert` exists (macOS ships
-it), which is ~40 % smaller; the lesson player reads each segment's type from
-`INITIAL_DATA.audioMimes`. Set `EDGE_TTS_CN_CODEC=mp3` to keep everything mp3 and
-make builds byte-identical across platforms. Expect the Chinese track to roughly
-double a lesson's file size (about +1.5 MB per ten-page book) — that is the cost of
-a narration the child can actually follow.
+Both tracks are mp3 as edge-tts emits them. AAC would shrink the Chinese track by
+~40 % (`EDGE_TTS_CN_CODEC=auto` or `=m4a`, needs `afconvert`; the player reads each
+segment's type from `INITIAL_DATA.audioMimes`), but it is **not the default** — a
+second container is a second way to end up silent on a device you did not test, and
+the Chinese track is the one place a mistake is inaudible in every static check.
+Expect the Chinese track to roughly double a lesson's file size (about +1.5 MB per
+ten-page book) — that is the cost of a narration the child can actually follow.
 
 A `--incremental-audio` rebuild takes seconds instead of minutes: only segments
 whose own text changed are re-recorded, and the two tracks invalidate separately —
@@ -330,6 +331,9 @@ button (the lesson itself is unaffected). Copy the whole library to keep it work
 | Explanation audio loads but never plays | the clip was re-encoded (AAC) while the player still hard-coded `audio/mp3` | carry the type per segment in `INITIAL_DATA.audioMimes`; the smoke test loads one clip for real |
 | The explanation reads "★ … = …" aloud | the handout text is written for the eye | run it through `clean_speech()` in `gen_audio.py` before speaking |
 | A new Chinese clip re-records the whole Spanish track | one combined voice/fingerprint check invalidated everything | keep the two tracks independent: invalidate per language, on voice *and* codec |
+| **Tapping a speaker button does nothing** | the button had a second click listener, so one tap ran `playSeg` twice — the second call stopped the clip the first had just started | wire `.tts` in **exactly one place** (the delegated handler on `document`); never add a per-button listener, just render `class="tts" data-segid="…"` |
+| A smoke test passes while the page is silent | it waited for `loadedmetadata`; a clip reports that even when it can never play (wrong mime, unplayable container) | assert a **real tap** reaches `playing`, and that one tap constructs **exactly one** `Audio` |
+| Every smoke run dies with exit 137 / SIGTERM | the full browser was launched on a machine that was already short of RAM, and an aborted run leaves ~11 zombie processes behind | prefer `chrome-headless-shell` (now first in the candidate list); `pkill -f chrome-headless-shell` to clear leftovers |
 
 ## Boundaries
 

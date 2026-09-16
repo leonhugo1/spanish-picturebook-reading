@@ -130,32 +130,45 @@ async function main() {
     return { clicked: true, hasClass: c.classList.contains("speaking") };
   });
 
-  // Load a Chinese clip for real. This is the only check that the stored bytes
-  // and the recorded MIME type agree — the Chinese track may be AAC, and a
-  // mismatch stays invisible to every static assertion.
-  const audioProbe = await page.evaluate(async () => {
-    const DATA = typeof INITIAL_DATA === "undefined" ? null : INITIAL_DATA;
-    const mimes = DATA?.audioMimes || {};
-    const ids = Object.keys(DATA?.audio || {}).filter(k => k.startsWith("deep."));
-    if (!ids.length) return { tested: 0, ok: 0, seen: [] };
-    const probe = (id) => new Promise(res => {
-      const a = new Audio("data:" + (mimes[id] || "audio/mpeg") + ";base64," + DATA.audio[id]);
-      const done = r => { a.onloadedmetadata = a.onerror = null; res(r); };
-      a.onloadedmetadata = () => done({ ok: true, dur: a.duration });
-      a.onerror = () => done({ ok: false, dur: 0 });
-      setTimeout(() => done({ ok: false, dur: 0 }), 8000);
-      a.load();
-    });
-    const pick = [...new Set([ids[0], ids[Math.floor(ids.length / 2)], ids[ids.length - 1]])];
-    let ok = 0;
-    const seen = [];
-    for (const id of pick) {
-      const r = await probe(id);
-      if (r.ok) ok++;
-      seen.push({ id, mime: mimes[id] || "audio/mpeg", ok: r.ok, dur: +(r.dur || 0).toFixed(1) });
-    }
-    return { tested: pick.length, ok, seen };
+  // Real playback: instrument the Audio constructor, then TAP the buttons with a
+  // trusted gesture and check the clips actually started.
+  //
+  // Two failures this catches, and nothing else can:
+  //   * a clip that loads but never plays (a wrong mime type loads fine);
+  //   * a tap that fires the handler twice — the second call stops the clip the
+  //     first one started, so the button looks dead while the audio is perfect.
+  //     That is measured here as "exactly one Audio built per tap".
+  await page.evaluate(() => {
+    window.__audioLog = [];
+    const Orig = window.Audio;
+    window.Audio = function (src) {
+      const a = new Orig(src);
+      const rec = { mime: String(src || "").slice(5, 15), events: [], errorCode: null };
+      window.__audioLog.push(rec);
+      ["loadedmetadata", "canplay", "playing", "pause", "ended", "error"].forEach(ev =>
+        a.addEventListener(ev, () => rec.events.push(ev)));
+      a.addEventListener("error", () => { rec.errorCode = a.error && a.error.code; });
+      return a;
+    };
+    window.Audio.prototype = Orig.prototype;
   });
+
+  // switch to the handout (not a real gesture, but selection needs none)
+  await page.evaluate(() => document.querySelector('[data-view="deep"]').click());
+  await new Promise(r => setTimeout(r, 300));
+  await page.click('#deepSentences .int-say-row > .tts[data-segid]');
+  await new Promise(r => setTimeout(r, 1800));
+  const zhTap = await page.evaluate(() => window.__audioLog.slice());
+
+  // and one Spanish button, from the book view
+  await page.evaluate(() => {
+    window.__audioLog.length = 0;
+    document.querySelector('[data-view="book"]').click();
+  });
+  await new Promise(r => setTimeout(r, 300));
+  await page.click(".word");
+  await new Promise(r => setTimeout(r, 1500));
+  const esTap = await page.evaluate(() => window.__audioLog.slice());
 
   if (shot) {
     await page.evaluate(() => document.getElementById("bookStage").scrollIntoView());
@@ -213,13 +226,19 @@ async function main() {
       first.sayButtons === first.sayExpected],
     ["handout explanation clips recorded",
       first.sayClips === first.sayExpected || process.env.SMOKE_ALLOW_SILENT === "1"],
-    ["handout explanation audio loads (mime matches the bytes)",
-      audioProbe.tested === 0 || audioProbe.ok === audioProbe.tested],
+    // A tap must produce exactly ONE clip, and that clip must actually play.
+    // A silent build has no clip to build, so those two are skipped.
+    ["tapping an explanation button plays it, exactly once",
+      (process.env.SMOKE_ALLOW_SILENT === "1" && zhTap.length === 0) ||
+      (zhTap.length === 1 && zhTap[0].events.includes("playing"))],
+    ["tapping a word card plays it, exactly once",
+      (process.env.SMOKE_ALLOW_SILENT === "1" && esTap.length === 0) ||
+      (esTap.length === 1 && esTap[0].events.includes("playing"))],
     ["no page errors", errors.length === 0],
   ];
 
   console.log("=== probe ===");
-  console.log(JSON.stringify({ ...first, ...second, audioProbe }, null, 2));
+  console.log(JSON.stringify({ ...first, ...second, zhTap, esTap }, null, 2));
 
   const failed = report("lesson checks", checks, errors);
   process.exit(failed === 0 ? 0 : 1);

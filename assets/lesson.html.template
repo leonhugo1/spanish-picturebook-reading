@@ -721,17 +721,6 @@ document.addEventListener('keydown', e => {
         ${c.explanation ? `<div class="int-cult-expl">${nl2br(c.explanation)}</div>` : ''}
       </div>${sayBtn(`deep.cult.${i}`)}
     </div></div>`).join('') : '<div class="int-empty">本课暂无文化背景。</div>';
-
-  // Bind the explanation buttons once the markup exists. Unlike the word-card
-  // taps (which fire and forget), these keep the full play/pause state machine:
-  // an explanation clip can run half a minute.
-  ['deepSentences', 'deepVocab', 'deepCulture'].forEach(id => {
-    const host = el(id);
-    if (!host) return;
-    host.querySelectorAll('.tts[data-segid]').forEach(btn => {
-      btn.addEventListener('click', () => playSeg(btn.dataset.segid, btn));
-    });
-  });
 })();
 
 /* ---------------- post-reading ---------------- */
@@ -803,6 +792,11 @@ document.querySelectorAll('.view-tab').forEach(t => t.addEventListener('click', 
 document.querySelectorAll('.next-btn').forEach(b => b.addEventListener('click', () => goStage(b.dataset.goto)));
 
 /* ---------------- speaker buttons (generic) ---------------- */
+/* This is the ONE place .tts buttons are wired. Do NOT add a second click
+   listener on the button itself: a tap would then call playSeg twice, and the
+   second call stops the clip the first one just started — the button looks
+   dead even though the audio is fine. Just render `class="tts"
+   data-segid="…"` and let this handler do the work. */
 document.addEventListener('click', e => {
   const btn = e.target.closest('.tts');
   if (!btn) return;

@@ -238,7 +238,7 @@ Spanish voices:
 
 Chinese voices: `zh-CN-XiaoxiaoNeural` (default), `zh-CN-YunxiNeural`, `zh-CN-XiaoyiNeural`. Microsoft's *Multilingual* voices (`zh-CN-XiaoxiaoMultilingualNeural`) are not available on the free edge-tts endpoint — asking for one raises `NoAudioReceived`.
 
-Chinese clips are re-encoded to 24 kbps AAC where `afconvert` exists (macOS ships it), cutting them about 40 %. Set `EDGE_TTS_CN_CODEC=mp3` to keep everything mp3 and make builds byte-identical across platforms.
+Both tracks are mp3, as edge-tts emits them. The Chinese track *can* be re-encoded to 24 kbps AAC where `afconvert` exists (macOS ships it), cutting it about 40 % — set `EDGE_TTS_CN_CODEC=auto` to opt in. It is off by default on purpose: a second container is a second way to end up silent on a device nobody tested.
 
 ```bash
 EDGE_TTS_VOICE=es-MX-DaliaNeural node scripts/build.js content.json worksheet.json out/

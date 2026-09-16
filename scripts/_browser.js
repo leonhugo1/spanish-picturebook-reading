@@ -32,13 +32,24 @@ function candidates() {
   const home = os.homedir();
   const out = [];
 
-  // 2 · Playwright caches
+  // 2 · Playwright caches.
+  //
+  // `chrome-headless-shell` comes first on purpose: it is the same engine built
+  // for headless only, so it starts faster and uses noticeably less memory than
+  // the full browser. On a machine that is already short on RAM, launching the
+  // full one can get the whole process SIGTERM'd mid-run.
   const pwRoots = [
     path.join(home, "Library", "Caches", "ms-playwright"), // macOS
     path.join(home, ".cache", "ms-playwright"),             // Linux
     path.join(process.env.LOCALAPPDATA || "", "ms-playwright"), // Windows
   ];
   for (const root of pwRoots) {
+    for (const dir of globish(root, "chromium_headless_shell-*")) {
+      out.push(path.join(dir, "chrome-headless-shell-mac-arm64", "chrome-headless-shell"));
+      out.push(path.join(dir, "chrome-headless-shell-mac-x64", "chrome-headless-shell"));
+      out.push(path.join(dir, "chrome-headless-shell-linux64", "chrome-headless-shell"));
+      out.push(path.join(dir, "chrome-headless-shell-win64", "chrome-headless-shell.exe"));
+    }
     for (const dir of globish(root, "chromium-*")) {
       out.push(path.join(dir, "chrome-mac-arm64", "Google Chrome for Testing.app", "Contents", "MacOS", "Google Chrome for Testing"));
       out.push(path.join(dir, "chrome-mac-x64", "Google Chrome for Testing.app", "Contents", "MacOS", "Google Chrome for Testing"));
