@@ -2,6 +2,9 @@
 
 **English** · [简体中文](README.zh-CN.md)
 
+[![CI](https://github.com/leonhugo1/spanish-picturebook-reading/actions/workflows/ci.yml/badge.svg)](https://github.com/leonhugo1/spanish-picturebook-reading/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Turn a **Spanish picture book** — page photos, scans, or a PDF — into a **single-file interactive HTML lesson** plus a **printable worksheet with an answer key for parents**.
 
 Built for a Chinese-speaking child learning Spanish as a foreign language: the interface speaks Chinese, the book stays in Spanish, and every line comes with a translation, a grammar gloss, and a native-sounding recording.

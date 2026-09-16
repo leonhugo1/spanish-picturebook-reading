@@ -2,6 +2,9 @@
 
 [English](README.md) · **简体中文**
 
+[![CI](https://github.com/leonhugo1/spanish-picturebook-reading/actions/workflows/ci.yml/badge.svg)](https://github.com/leonhugo1/spanish-picturebook-reading/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 把一本**西班牙语绘本**（页面照片、扫描件或 PDF）变成**单文件交互式 HTML 课件**，外加一份**带家长答案页的可打印练习册**。
 
 为**中文母语、正在开始学西语**的孩子做的：界面说中文，绘本保持西语，每一句都配翻译、语法讲解和母语级配音。
