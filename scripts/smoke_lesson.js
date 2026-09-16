@@ -153,11 +153,25 @@ async function main() {
     window.Audio.prototype = Orig.prototype;
   });
 
+  // Wait for the tap to actually reach `playing`. Polling rather than sleeping a
+  // fixed amount: a busy machine can take a second or two to decode the clip,
+  // and a fixed wait turns that into a flaky failure.
+  const waitForPlaying = async (ms) => {
+    const deadline = Date.now() + ms;
+    while (Date.now() < deadline) {
+      const started = await page.evaluate(() =>
+        window.__audioLog.some(r => r.events.includes("playing")));
+      if (started) return true;
+      await new Promise(r => setTimeout(r, 120));
+    }
+    return false;
+  };
+
   // switch to the handout (not a real gesture, but selection needs none)
   await page.evaluate(() => document.querySelector('[data-view="deep"]').click());
   await new Promise(r => setTimeout(r, 300));
   await page.click('#deepSentences .int-say-row > .tts[data-segid]');
-  await new Promise(r => setTimeout(r, 1800));
+  const zhPlayed = await waitForPlaying(8000);
   const zhTap = await page.evaluate(() => window.__audioLog.slice());
 
   // and one Spanish button, from the book view
@@ -167,7 +181,7 @@ async function main() {
   });
   await new Promise(r => setTimeout(r, 300));
   await page.click(".word");
-  await new Promise(r => setTimeout(r, 1500));
+  const esPlayed = await waitForPlaying(8000);
   const esTap = await page.evaluate(() => window.__audioLog.slice());
 
   if (shot) {
@@ -230,15 +244,15 @@ async function main() {
     // A silent build has no clip to build, so those two are skipped.
     ["tapping an explanation button plays it, exactly once",
       (process.env.SMOKE_ALLOW_SILENT === "1" && zhTap.length === 0) ||
-      (zhTap.length === 1 && zhTap[0].events.includes("playing"))],
+      (zhTap.length === 1 && zhPlayed)],
     ["tapping a word card plays it, exactly once",
       (process.env.SMOKE_ALLOW_SILENT === "1" && esTap.length === 0) ||
-      (esTap.length === 1 && esTap[0].events.includes("playing"))],
+      (esTap.length === 1 && esPlayed)],
     ["no page errors", errors.length === 0],
   ];
 
   console.log("=== probe ===");
-  console.log(JSON.stringify({ ...first, ...second, zhTap, esTap }, null, 2));
+  console.log(JSON.stringify({ ...first, ...second, zhPlayed, esPlayed, zhTap, esTap }, null, 2));
 
   const failed = report("lesson checks", checks, errors);
   process.exit(failed === 0 ? 0 : 1);

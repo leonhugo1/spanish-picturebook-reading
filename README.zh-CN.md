@@ -80,6 +80,9 @@ open out/gato-luna_Lectura_Lesson.html
 # ① 先探测这本书的裁剪框
 python3 scripts/prep_pages.py book.pdf build/pages --print-bounds
 
+# ①b 量出水印带（**不要靠眼看**）
+python3 scripts/prep_pages.py book.pdf build/pages --print-watermark
+
 # ② 裁掉白边、抹掉水印，并把每页的正文行拼成一张图供转录
 python3 scripts/prep_pages.py book.pdf build/pages \
     --erase-band 196,252 \
@@ -89,6 +92,7 @@ python3 scripts/prep_pages.py book.pdf build/pages \
 ```
 
 - `--print-bounds` 报出每一页的着墨边界 —— 把这些数字抄进 `--box`。
+- `--print-watermark` 报出**页顶那条稀疏灰带**（盗版水印就在那儿），并给出覆盖全部页的 `--erase-band` 建议值。记得**留几行余量**。
 - `--erase-band TOP,BOT` **抹掉水印**：把紧邻下方的干净像素行整行覆盖上去。水印是浅灰、插画是实色，所以填上去看不出痕迹；比直接裁掉更好，因为不会切到画面。
 - `--captions` 生成 `_captions.png`：每页的正文行叠成一张图，**一次看完十页**，不用逐页开图。
 - 输出统一 1200px 宽 / JPEG q82，单页 30–150 KB。

@@ -87,6 +87,35 @@ def bounds(img: np.ndarray) -> tuple[int, int, int, int] | None:
     return int(cols[0]), int(rows[0]), int(cols[-1]), int(rows[-1])
 
 
+def watermark_band(g: "np.ndarray") -> tuple[int, int] | None:
+    """
+    Find the reseller's stamp. It is a band of sparse mid-grey text near the top
+    of the page: within it, each row carries a few percent of mid-grey pixels and
+    essentially no dark ones.
+
+    Only the FIRST such band is returned, and that is the point: artwork lower
+    down can look statistically identical (a watercolour sky is mid-grey too),
+    but the stamp is always the topmost one. Treat the answer as a candidate and
+    still glance at the page — a very pale illustration could sit above it.
+    """
+    grey = (g > 150) & (g < 245)
+    dark = g < 120
+    limit = min(g.shape[0], 400)
+    rows = []
+    for y in range(limit):
+        fraction = grey[y].mean()
+        rows.append(0.03 < fraction < 0.45 and dark[y].mean() < 0.01)
+    start = None
+    for y, on in enumerate(rows + [False]):
+        if on and start is None:
+            start = y
+        elif not on and start is not None:
+            if y - start >= 6:
+                return (start, y - 1)
+            start = None
+    return None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1],
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -107,6 +136,8 @@ def main() -> int:
     ap.add_argument("--caption-band", type=parse_box, default=parse_box("200,900,1480,968"))
     ap.add_argument("--print-bounds", action="store_true",
                     help="report the ink bounding box per page and exit")
+    ap.add_argument("--print-watermark", action="store_true",
+                    help="report the candidate watermark band per page and exit")
     args = ap.parse_args()
 
     pdf = Path(args.pdf).expanduser().resolve()
@@ -117,6 +148,26 @@ def main() -> int:
     raw_dir = Path(args.raw_dir).expanduser().resolve() if args.raw_dir else out_dir.parent / "raw"
 
     raws = render(pdf, raw_dir, args.zoom)
+
+    if args.print_watermark:
+        print(f"\n{'page':<8} {'top':>6} {'bottom':>6}   candidate watermark band")
+        tops, bottoms = [], []
+        for p in raws:
+            g = np.array(Image.open(p).convert("L"))
+            b = watermark_band(g)
+            if b:
+                tops.append(b[0]); bottoms.append(b[1])
+                print(f"{p.stem:<8} {b[0]:>6} {b[1]:>6}   ← use --erase-band")
+            else:
+                print(f"{p.stem:<8} {'—':>6} {'—':>6}   none found")
+        if tops:
+            print(f"\n--erase-band {min(tops)},{max(bottoms)}"
+                  f"   (covers every page; add a few rows of margin)")
+        else:
+            print("\nNo watermark found on any page.")
+        print("Confirm against the page images before trusting this: a pale\n"
+              "illustration high on the page can be mistaken for the stamp.")
+        return 0
 
     if args.print_bounds:
         print(f"\n{'page':<8} {'left':>6} {'top':>6} {'right':>6} {'bottom':>6}")

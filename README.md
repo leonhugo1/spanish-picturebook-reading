@@ -81,6 +81,9 @@ Most graded readers in the wild are page-image PDFs with **no text layer**, ofte
 # 1 · find the crop boxes for this particular book
 python3 scripts/prep_pages.py book.pdf build/pages --print-bounds
 
+# 1b · measure the watermark band (don't eyeball it)
+python3 scripts/prep_pages.py book.pdf build/pages --print-watermark
+
 # 2 · crop the margins, erase the watermark band, and emit a strip of every
 #     page's caption line so you can transcribe the whole book in one look
 python3 scripts/prep_pages.py book.pdf build/pages \
@@ -92,6 +95,7 @@ python3 scripts/prep_pages.py book.pdf build/pages \
 ```
 
 - `--print-bounds` reports the ink bounding box of every page — copy those numbers into `--box`.
+- `--print-watermark` reports the topmost band of sparse grey rows (where the reseller's stamp sits) and prints the `--erase-band` covering every page. Leave a few rows of margin.
 - `--erase-band TOP,BOT` **erases a watermark** by copying the clean row just below it up over the band. Because a watermark is light grey and artwork is solid, the fill is invisible. This beats cropping, which would cut into the picture.
 - `--captions` writes `_captions.png`: every page's caption line stacked into one image, so you transcribe ten pages in one look instead of opening ten files.
 - Output is 1200px-wide progressive JPEG, ~30–150 KB per page.

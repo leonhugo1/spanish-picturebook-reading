@@ -2,7 +2,7 @@
 name: spanish-picturebook-reading
 description: Turn a Spanish picture book (page photos, scans, or a PDF) into a single-file interactive HTML reading lesson — per-page illustration, Spanish text with Chinese subtitles, neural-voice narration, sentence-level grammar glosses and click-to-hear word cards — plus a printable worksheet with a parent answer key. Use when the user wants a Spanish picture-book lesson, 西语绘本精读, 绘本精读课件, or a matching worksheet.
 metadata:
-  version: "1.3.1"
+  version: "1.3.2"
 ---
 
 # Spanish picture-book reading
@@ -106,6 +106,9 @@ watermark across the top of every spread. Do the mechanical part with the script
 # 1 · find the crop boxes for this book
 python3 scripts/prep_pages.py book.pdf build/pages --print-bounds
 
+# 1b · find the watermark band (do not eyeball it — measure it)
+python3 scripts/prep_pages.py book.pdf build/pages --print-watermark
+
 # 2 · crop the margins, erase the watermark band, and emit a caption strip
 python3 scripts/prep_pages.py book.pdf build/pages \
     --erase-band 196,252 \
@@ -114,9 +117,16 @@ python3 scripts/prep_pages.py book.pdf build/pages \
     --captions
 ```
 
+- `--print-watermark` reports the topmost band of **sparse mid-grey** rows (a
+  stamp is a few percent grey with no dark pixels) and prints the `--erase-band`
+  that covers every page. Only the first band per page counts: artwork contains
+  wide mid-grey areas too — a watercolour sky is grey — but the stamp is always
+  the one at the very top. Still glance at the page before trusting it.
 - `--erase-band TOP,BOT` **erases a watermark** by copying the clean row just below
   the band up over it. Watermarks are light grey and artwork is solid, so the fill
-  is invisible — and unlike cropping it does not cut into the picture.
+  is invisible — and unlike cropping it does not cut into the picture. **Add a few
+  rows of margin**: sampling a row profile that stops early leaves a faint stripe
+  of the stamp's descenders behind, which is easy to miss on screen.
 - `--box` / `--page-box` crop the margins and footer. Coordinates are in *rendered*
   pixels, so always run `--print-bounds` first and copy what it reports.
 - `--captions` writes `_captions.png`: every page's caption line stacked into one
@@ -309,6 +319,7 @@ button (the lesson itself is unaffected). Copy the whole library to keep it work
 |---|---|---|
 | Lesson is 30 MB and will not open on a tablet | page images embedded raw | run them through `prep_pages.py` (or `sips -Z 1200`) first |
 | A reseller watermark sits on the artwork | cropped, not erased | `--erase-band TOP,BOT` — copy a clean row up over the band |
+| A faint stripe of the stamp survives at the top of every page | the erase band came from a row profile that stopped sampling too early — the stamp ran ~20 px past the end of it | run `--print-watermark` for the real band, then add margin; never guess it from a partial scan |
 | Child learns the wrong punctuation | the opening `¿` / `¡` was dropped while transcribing | the validator fails the build; transcription must be checked by eye too |
 | Gender never sticks | word cards store bare nouns | write `el gato`; the validator rejects `gato` when `pos` is `m.`/`f.` |
 | Word card ends up blank when tapped | its inner HTML was handed to the button-state helper | cards are divs — play the clip without touching their contents |
@@ -323,7 +334,7 @@ button (the lesson itself is unaffected). Copy the whole library to keep it work
 | A portrait lesson is 5 MB | a portrait page has ~2× the area of a landscape one | add `--width 1000 --quality 80` |
 | A smoke test fails on every new book | the assertion hard-codes one book's vocabulary | assert on structure (`li` / `<b>` counts) and on values read from `INITIAL_DATA` |
 | Build continues after a failed audit | `cmd \| tail` returns *tail's* exit status | use `if ! cmd; then …`, or redirect to a file and read the status |
-| The watermark check flags half the artwork | mid-grey pixels are counted, and artwork is grey too | a watermark is a *narrow band spanning the full width* — look at the strip, don't trust the threshold |
+| The watermark check flags half the artwork | mid-grey pixels are counted, and artwork is grey too | only the **topmost** sparse-grey band is the stamp (`--print-watermark`); a watercolour sky is grey as well, so position — not the threshold — is what tells them apart |
 | An edit silently did not land | several files edited in the same pass | re-read the changed lines afterwards; never assume the write succeeded |
 | The word-card example line is silent | only `book.word.{i}` was recorded, so the example has no clip | record `book.wordex.{i}` from `exampleEs` too — two taps, two clips |
 | The reading-aloud section asks for nothing repeatable | its clip was recorded from the Chinese lead-in, so the button spoke Chinese | give every speaking prompt an `es` sentence; *that* is what `post.speak.N` records |
@@ -333,7 +344,8 @@ button (the lesson itself is unaffected). Copy the whole library to keep it work
 | A new Chinese clip re-records the whole Spanish track | one combined voice/fingerprint check invalidated everything | keep the two tracks independent: invalidate per language, on voice *and* codec |
 | **Tapping a speaker button does nothing** | the button had a second click listener, so one tap ran `playSeg` twice — the second call stopped the clip the first had just started | wire `.tts` in **exactly one place** (the delegated handler on `document`); never add a per-button listener, just render `class="tts" data-segid="…"` |
 | A smoke test passes while the page is silent | it waited for `loadedmetadata`; a clip reports that even when it can never play (wrong mime, unplayable container) | assert a **real tap** reaches `playing`, and that one tap constructs **exactly one** `Audio` |
-| Every smoke run dies with exit 137 / SIGTERM | the full browser was launched on a machine that was already short of RAM, and an aborted run leaves ~11 zombie processes behind | prefer `chrome-headless-shell` (now first in the candidate list); `pkill -f chrome-headless-shell` to clear leftovers |
+| A smoke run dies with exit 137 / SIGTERM | the full browser was launched on a machine that was already short of RAM, and an aborted run leaves ~11 zombie processes behind | prefer `chrome-headless-shell` (now first in the candidate list); `pkill -f chrome-headless-shell` to clear leftovers |
+| A smoke test fails on one book, then passes on a rerun | it slept a fixed 1.8 s and checked for playback — a busy machine needs longer | **poll** for the condition (up to 8 s) instead of sleeping a fixed amount; a flaky gate gets ignored |
 
 ## Boundaries
 
