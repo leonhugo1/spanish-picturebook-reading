@@ -35,14 +35,48 @@ jobs:
             node --check "$f"
             echo "ok  $f"
           done
-          python3 -m py_compile scripts/prep_pages.py scripts/gen_audio.py examples/gato-luna/make_fixture.py
+          python3 -m py_compile scripts/*.py examples/gato-luna/make_fixture.py
           echo "ok  python scripts"
 
+      # Runs before the build on purpose: it catches the authoring mistakes
+      # (answer missing from its own word bank, a Cyrillic letter pasted among
+      # Latin ones, a page sentence that disagrees with the page text) that
+      # validate.js and the smoke tests cannot see.
+      - name: Audit the content
+        run: python3 scripts/audit_content.py examples/gato-luna
+
       - name: Build the bundled example (silent — no edge-tts in CI)
-        run: node scripts/build.js --no-audio examples/gato-luna/content.json examples/gato-luna/worksheet.json out
+        run: node scripts/build.js --no-audio examples/gato-luna/content.json examples/gato-luna/worksheet.json examples/gato-luna/out
 
       - name: Validate
-        run: node scripts/validate.js out
+        run: node scripts/validate.js examples/gato-luna/out
+
+      - name: Generate the course-library index
+        run: python3 scripts/make_index.py examples
+
+      - name: Every library link must resolve, and every lesson must link back
+        run: |
+          python3 - <<'PY'
+          import pathlib, re, sys
+          root = pathlib.Path("examples")
+          index = root / "index.html"
+          assert index.exists(), "make_index.py did not write examples/index.html"
+          links = re.findall(r'href="([^"]+)"', index.read_text(encoding="utf-8"))
+          assert links, "the index page has no lesson links"
+          missing = [l for l in links if not (root / l).exists()]
+          if missing:
+              sys.exit(f"::error::broken library links: {missing}")
+          print(f"ok  {len(links)} library link(s) resolve")
+
+          # The back-to-library button is rendered from meta.indexHref at runtime,
+          # so what the build must guarantee is that the value is embedded intact.
+          # (The browser smoke job below asserts the button actually appears.)
+          for page in sorted((root / "gato-luna" / "out").glob("*.html")):
+              html = page.read_text(encoding="utf-8")
+              if not re.search(r'"indexHref"\s*:\s*"\.\./\.\./index\.html"', html):
+                  sys.exit(f"::error::{page.name} does not embed meta.indexHref")
+              print(f"ok  {page.name} embeds the back-to-library target")
+          PY
 
       - name: The example must still match its generator
         run: |
@@ -60,8 +94,17 @@ jobs:
         with:
           node-version: '20'
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Built into the example's own out/ so the back-to-library link resolves
+      # exactly the way it does for a real library (<library>/<lesson>/out/).
       - name: Build the bundled example (silent)
-        run: node scripts/build.js --no-audio examples/gato-luna/content.json examples/gato-luna/worksheet.json out
+        run: node scripts/build.js --no-audio examples/gato-luna/content.json examples/gato-luna/worksheet.json examples/gato-luna/out
+
+      - name: Generate the course-library index
+        run: python3 scripts/make_index.py examples
 
       - uses: browser-actions/setup-chrome@v1
         id: chrome
@@ -75,12 +118,12 @@ jobs:
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
           SMOKE_ALLOW_SILENT: '1'
-        run: node scripts/smoke_lesson.js out/gato-luna_Lectura_Lesson.html /tmp/shot.png
+        run: node scripts/smoke_lesson.js examples/gato-luna/out/gato-luna_Lectura_Lesson.html /tmp/shot.png
 
       - name: Smoke-test the worksheet and answer key
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
-        run: node scripts/smoke_worksheet.js out/gato-luna_Cuaderno_Worksheet.html /tmp/ak
+        run: node scripts/smoke_worksheet.js examples/gato-luna/out/gato-luna_Cuaderno_Worksheet.html /tmp/ak
 
       - name: Keep the screenshots for inspection
         if: always()

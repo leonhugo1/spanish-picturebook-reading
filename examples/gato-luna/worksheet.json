@@ -5,24 +5,55 @@
     "filenameStem": "gato-luna",
     "lessonTitle": "El gato y la luna",
     "directions": "先读一遍绘本，再完成下面的练习。可以随时翻回课件看原句。",
-    "timeEstimate": "10–15 分钟"
+    "timeEstimate": "10–15 分钟",
+    "indexHref": "../../index.html"
   },
   "matching": {
     "directions": "把西语词和中文意思连起来。注意冠词 el / la 也是词的一部分。",
     "items": [
-      { "word": "el gato", "meaning": "猫" },
-      { "word": "la luna", "meaning": "月亮" },
-      { "word": "la noche", "meaning": "夜晚" },
-      { "word": "el tejado", "meaning": "屋顶" }
+      {
+        "word": "el gato",
+        "meaning": "猫"
+      },
+      {
+        "word": "la luna",
+        "meaning": "月亮"
+      },
+      {
+        "word": "la noche",
+        "meaning": "夜晚"
+      },
+      {
+        "word": "el tejado",
+        "meaning": "屋顶"
+      }
     ]
   },
   "fillInBlank": {
     "directions": "从词库里选词填空。",
-    "wordBank": ["noche", "luna", "gato", "tejado", "cerca"],
+    "wordBank": [
+      "noche",
+      "luna",
+      "gato",
+      "tejado",
+      "cerca"
+    ],
     "items": [
-      { "before": "Es de ", "after": ". 天黑了。", "answer": "noche" },
-      { "before": "El ", "after": " mira la luna. 猫看着月亮。", "answer": "gato" },
-      { "before": "El gato sube al ", "after": ". 猫爬上屋顶。", "answer": "tejado" }
+      {
+        "before": "Es de ",
+        "after": ". 天黑了。",
+        "answer": "noche"
+      },
+      {
+        "before": "El ",
+        "after": " mira la luna. 猫看着月亮。",
+        "answer": "gato"
+      },
+      {
+        "before": "El gato sube al ",
+        "after": ". 猫爬上屋顶。",
+        "answer": "tejado"
+      }
     ]
   },
   "imitation": {
@@ -50,18 +81,38 @@
   },
   "summary": {
     "directions": "把绘本内容补全成一段完整的话。",
-    "wordBank": ["la luna", "grande", "tejado", "cerca", "pequeño", "noche"],
+    "wordBank": [
+      "la luna",
+      "grande",
+      "tejado",
+      "cerca",
+      "pequeño",
+      "noche"
+    ],
     "segments": [
       "El gato mira ",
-      { "blank": 0 },
+      {
+        "blank": 0
+      },
       ". La luna es muy ",
-      { "blank": 1 },
+      {
+        "blank": 1
+      },
       ". El gato sube al ",
-      { "blank": 2 },
+      {
+        "blank": 2
+      },
       " y ahora está más ",
-      { "blank": 3 },
+      {
+        "blank": 3
+      },
       "."
     ],
-    "answers": ["la luna", "grande", "tejado", "cerca"]
+    "answers": [
+      "la luna",
+      "grande",
+      "tejado",
+      "cerca"
+    ]
   }
 }

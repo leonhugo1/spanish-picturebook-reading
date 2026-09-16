@@ -46,6 +46,10 @@ async function main() {
       matchItems: document.querySelectorAll("#matchLeft .chip").length,
       fillBlanks: document.querySelectorAll("#fillList .blank").length,
       sumBlanks: document.querySelectorAll("#sumList .blank").length,
+      // Back-to-library link: appears only when the JSON declares meta.indexHref.
+      homeHref: q(".hero-home")?.getAttribute("href") || null,
+      homeVisible: visible(q(".hero-home")),
+      homeExpected: (typeof INITIAL_DATA === "undefined" ? null : INITIAL_DATA?.meta?.indexHref) || null,
     };
   });
 
@@ -127,6 +131,10 @@ async function main() {
     ["submit marks the sheet graded", grading.submitted],
     ["score is displayed", grading.scoreShown && /\d/.test(grading.scoreText)],
     ["objective items get marked", grading.markedBlanks > 0],
+    ["back-to-library link matches meta.indexHref",
+      (folded.homeExpected === null && folded.homeHref === null) ||
+      (folded.homeExpected !== null && folded.homeHref === folded.homeExpected)],
+    ["back-to-library link visible when declared", !folded.homeExpected || folded.homeVisible],
     ["no page errors", errors.length === 0],
   ];
 

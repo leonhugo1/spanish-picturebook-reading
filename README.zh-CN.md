@@ -24,7 +24,11 @@
 |---|---|
 | `<stem>_Lectura_Lesson.html` | 课件。单文件，离线可用，不需要服务器。 |
 | `<stem>_Cuaderno_Worksheet.html` | 练习册。底部带一个折叠的家长答案页。 |
+| `<课程库>/index.html` | 课程库导航页：每课一张卡，一键进课件或练习册。 |
 | `source/normalized_*.json` | 本次构建用的内容，便于重建或二次编辑。 |
+
+两份成品右上角都有一个 **`🏠 课程库` 返回键**，孩子不用在文件夹里翻找就能换课 ——
+见下面的[课程库](#课程库)一节。
 
 ### 课件
 
@@ -151,6 +155,10 @@ node scripts/build.js --no-audio content.json worksheet.json out/
 # 改完插图或译文后重建：没变的配音全部复用
 node scripts/build.js --incremental-audio content.json worksheet.json out/
 
+# 构建前先做内容自审 —— 它抓的是 validate.js 看不见的错：
+# 答案不在自己的词库里、西里尔字母混进了拉丁字母里、某页的句子和整页文本不一致
+python3 scripts/audit_content.py .
+
 # 静态校验
 node scripts/validate.js out/
 
@@ -158,11 +166,42 @@ node scripts/validate.js out/
 npm install --no-save puppeteer-core
 node scripts/smoke_lesson.js    out/*_Lectura_Lesson.html    /tmp/shot.png
 node scripts/smoke_worksheet.js out/*_Cuaderno_Worksheet.html /tmp/ak
+
+# 给课程库生成导航页：每课一张卡（加完新课后重跑一次即可）
+python3 scripts/make_index.py <课程库根目录> --books-dir <原书 PDF 目录>
 ```
 
 `--incremental-audio` 按每段文本的指纹比对，只重录改动过的句子。一本 10 页绘本大约 50 段配音：改插图、改中文译文**一段都不会重录**，重建从几分钟降到一秒以内。
 
 **只有西语会进扬声器。** 中文是字幕，永远不配音。
+
+---
+
+## 课程库
+
+课一多，孩子就需要一个统一的入口。
+
+```bash
+python3 scripts/make_index.py <课程库根目录> --books-dir <原书 PDF 目录>
+```
+
+它会扫描根目录下每个 `<编号-书名>/content.json`，生成 `<课程库根目录>/index.html`：
+每课一张卡（西语书名、中文书名、页数、单词卡数、第一条教学目标），两个按钮分别进
+课件和练习册；顶部是完成进度；底部可折叠列出还没做的书（来自 `--books-dir`）。
+幂等 —— 每批做完重跑一次就行。
+
+**返回键。** 当 JSON 里声明了课程库位置时，两份成品右上角都会出现 `🏠 课程库`：
+
+```json
+"meta": { "indexHref": "../../index.html" }
+```
+
+路径是**相对于成品 HTML 文件**的。按本项目的目录约定
+（`<课程库>/<编号-书名>/out/`）一律填 `"../../index.html"`；不填就没有这个按钮。
+两套冒烟测试都会断言：JSON 声明了它就一定渲染出来，且指向声明的地址。
+
+因为是相对链接，**单独拷走某一个 HTML 会让返回键失效**（课件本身功能不受影响）。
+要整批给孩子用，请把整个课程库目录一起拷。
 
 ---
 

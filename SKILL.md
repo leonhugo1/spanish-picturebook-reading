@@ -2,7 +2,7 @@
 name: spanish-picturebook-reading
 description: Turn a Spanish picture book (page photos, scans, or a PDF) into a single-file interactive HTML reading lesson — per-page illustration, Spanish text with Chinese subtitles, neural-voice narration, sentence-level grammar glosses and click-to-hear word cards — plus a printable worksheet with a parent answer key. Use when the user wants a Spanish picture-book lesson, 西语绘本精读, 绘本精读课件, or a matching worksheet.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Spanish picture-book reading
@@ -19,7 +19,11 @@ Chinese, the book stays in Spanish, and Chinese is never spoken aloud.
 |---|---|
 | `<stem>_Lectura_Lesson.html` | The lesson: picture-book viewer + intensive handout + pre/post frame |
 | `<stem>_Cuaderno_Worksheet.html` | The worksheet, with a folded answer key for the parent |
+| `<library>/index.html` | The course library page (Step 5): one card per lesson, linking both files |
 | `source/normalized_*.json` | What was built, so it can be rebuilt |
+
+Both finished files carry a **`🏠 课程库` back-to-library button** in the header,
+driven by `meta.indexHref` (see Step 5).
 
 Content lives in JSON; layout lives in locked templates. **Never hand-edit a
 built HTML file** — edit the JSON and rebuild.
@@ -53,12 +57,23 @@ built HTML file** — edit the JSON and rebuild.
 5. **Page numbers are unique.** Use `caption` to tell the halves of a spread apart.
 6. **Do not redistribute the book.** A finished lesson holds scanned pages of
    someone else's copyrighted work. Keep it in the family; never publish it.
-7. **Two layers of answers.** The child's answers appear only after Submit. The
+7. **Run `audit_content.py` before every build.** It catches the authoring
+   mistakes the validator and the smoke tests cannot see. A lesson that fails
+   the audit does not get built — fixing one JSON line now beats rebuilding a
+   whole book later.
+8. **Never reuse a crop box across books.** Page size and watermark position are
+   per-book. Probe every book with `--print-bounds` first.
+9. **Two layers of answers.** The child's answers appear only after Submit. The
    parent gets a separate answer key, folded away, that prints on its own sheet.
 
 ## Step 1 · Input and page preparation
 
 You need the book (photos, scans, or a PDF) and an output directory.
+
+> ⚠️ **Crop boxes are per-book — never carry them over.** Three RAZ books in a row
+> turned out to be 1920×1242 (landscape), 931×1440 (portrait) and 841×595 (square),
+> with the watermark band starting around row 20, 195 and 20 respectively. Always
+> run `--print-bounds` on the book in front of you and copy the numbers it reports.
 
 Scanned readers usually have **no text layer** and often carry a reseller
 watermark across the top of every spread. Do the mechanical part with the script:
@@ -82,7 +97,13 @@ python3 scripts/prep_pages.py book.pdf build/pages \
   pixels, so always run `--print-bounds` first and copy what it reports.
 - `--captions` writes `_captions.png`: every page's caption line stacked into one
   image, so you transcribe the whole book in one look instead of opening ten files.
+- `--caption-band L,T,R,B` decides which rows that strip keeps. Its default comes
+  from one particular book — give it the band `--print-bounds` reported for *this*
+  book, or the strip slices the sentences in half and you transcribe them wrong.
 - Output is 1200px wide, JPEG q82, 30–150 KB per page.
+- **Portrait books (taller than 2:1) need extra compression.** A portrait page has
+  nearly twice the area of a landscape one, so 1200px lands at ~280 KB per page and
+  a 5 MB lesson. Add `--width 1000 --quality 80` — visually identical, 4 MB file.
 
 Then transcribe the Spanish. **Check 2–3 pages against the originals** — reading a
 scan drops the opening `¿` / `¡` and confuses `ñ` with `n`. The validator catches
@@ -164,6 +185,28 @@ with `EDGE_TTS_VOICE` (`es-ES-AlvaroNeural`, `es-MX-DaliaNeural`, `es-AR-ElenaNe
 A `--incremental-audio` rebuild on a ten-page book takes under a second instead of
 minutes: only segments whose Spanish text changed are re-recorded.
 
+## Step 3.5 · Audit the content — before building
+
+`validate.js` checks structure; the smoke tests check that the page runs. Neither
+can see the mistakes that actually happen while authoring, so there is a separate
+pass for content:
+
+```bash
+python3 scripts/audit_content.py .        # lesson + worksheet, exit code 0/1
+```
+
+| Check | Why it matters |
+|---|---|
+| A fill-in answer missing from its own `wordBank` | The child can never produce the right answer — the question is dead |
+| A Cyrillic or Greek letter among Latin ones (`buscastе`) | Identical on screen, but it breaks search, TTS and grading |
+| Unpaired `¿` / `¡` | The most common OCR and hand-copying error |
+| A page's `sentences[].es` not present in that page's `textEs` | The page narration and the sentence narration say **different things** |
+| A noun word card without its article | Gender never gets learned (`v.` / `adv.` / `loc.` cards are skipped) |
+| HTML inside a plain-text field | It renders as literal markup in front of the child |
+
+Run it **before** `build.js` — finding a missing word-bank entry after the whole
+book is written costs ten times more.
+
 ## Step 4 · Verify — required
 
 ```bash
@@ -182,6 +225,39 @@ Then finish with [references/release-gates.md](references/release-gates.md) —
 including the items only a human can judge: does the narration sound right, is
 there a watermark left on a page, does the finished file fit on a tablet.
 
+## Step 5 · Build the course library — once per batch
+
+Finished lessons pile up as `<library>/<NNN-slug>/out/`, and the child needs one
+entry point. Generate it:
+
+```bash
+python3 scripts/make_index.py <library-root> --books-dir <source PDF folder>
+```
+
+It reads every subdirectory's `content.json` and writes `<library-root>/index.html`:
+one card per lesson (Spanish title, Chinese title, page count, word-card count,
+first objective), buttons into the lesson and into the worksheet, a progress count
+at the top, and a collapsible list of the books still to do. **Idempotent — rerun
+it whenever you add a lesson.**
+
+### The back-to-library button
+
+Both finished files show a **`🏠 课程库`** button in the header (left of Export /
+Print). It is driven by `meta.indexHref` in the JSON:
+
+```json
+"meta": { "indexHref": "../../index.html" }
+```
+
+The path is **relative to the built HTML file**. Under this skill's layout
+(`<library>/<NNN-slug>/out/`) it is always `"../../index.html"`. Leave the field out
+and no button is rendered — which is the right choice for a one-off lesson.
+Both smoke tests assert that the button appears exactly when the JSON asks for it,
+and that it points where the JSON said.
+
+⚠️ It is a relative link: copying a single HTML file somewhere else breaks the
+button (the lesson itself is unaffected). Copy the whole library to keep it working.
+
 ## Mistakes that actually happen
 
 | Symptom | Cause | Fix |
@@ -197,6 +273,13 @@ there a watermark left on a page, does the finished file fit on a tablet.
 | Answer key printed with the questions | it was expanded, or the print rule was lost | fold it for the child's copy; the CSS breaks the page when expanded |
 | Parent cannot mark the open questions | `sampleAnswer` was never written | add it to imitation / paragraphImitation |
 | Two pages collide | the same `page` number used twice | one number per page; `caption` distinguishes a spread |
+| The next book is cropped into the artwork | its crop box was copied from the previous book | page size is per-book — landscape, portrait and square all occur; always re-probe |
+| Caption strip shows half a sentence | `--caption-band` still holds another book's rows | pass the band `--print-bounds` reported for *this* book |
+| A portrait lesson is 5 MB | a portrait page has ~2× the area of a landscape one | add `--width 1000 --quality 80` |
+| A smoke test fails on every new book | the assertion hard-codes one book's vocabulary | assert on structure (`li` / `<b>` counts) and on values read from `INITIAL_DATA` |
+| Build continues after a failed audit | `cmd \| tail` returns *tail's* exit status | use `if ! cmd; then …`, or redirect to a file and read the status |
+| The watermark check flags half the artwork | mid-grey pixels are counted, and artwork is grey too | a watermark is a *narrow band spanning the full width* — look at the strip, don't trust the threshold |
+| An edit silently did not land | several files edited in the same pass | re-read the changed lines afterwards; never assume the write succeeded |
 
 ## Boundaries
 

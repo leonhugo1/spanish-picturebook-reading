@@ -24,7 +24,12 @@ scanned pages  →  per-page art + Spanish line + Chinese subtitle + narration
 |---|---|
 | `<stem>_Lectura_Lesson.html` | The lesson. One file, works offline, no server. |
 | `<stem>_Cuaderno_Worksheet.html` | The worksheet, with a folded answer key for the parent. |
+| `<library>/index.html` | The course-library page: one card per lesson, linking both files. |
 | `source/normalized_*.json` | The content that was built, so a lesson can be rebuilt or edited. |
+
+Both finished files carry a **`🏠 课程库` back-to-library button** in the header, so a
+child can move between lessons without hunting through folders — see
+[Course library](#course-library) below.
 
 ### The lesson
 
@@ -153,6 +158,11 @@ node scripts/build.js --no-audio content.json worksheet.json out/
 # rebuild after editing a picture or a translation: reuses every unchanged clip
 node scripts/build.js --incremental-audio content.json worksheet.json out/
 
+# audit the content BEFORE building — it catches what validate.js cannot:
+# an answer missing from its own word bank, a Cyrillic letter pasted among Latin
+# ones, a page whose sentences disagree with its full text
+python3 scripts/audit_content.py .
+
 # static checks
 node scripts/validate.js out/
 
@@ -160,11 +170,45 @@ node scripts/validate.js out/
 npm install --no-save puppeteer-core
 node scripts/smoke_lesson.js    out/*_Lectura_Lesson.html    /tmp/shot.png
 node scripts/smoke_worksheet.js out/*_Cuaderno_Worksheet.html /tmp/ak
+
+# one card per lesson, in one navigation page (rerun whenever you add a lesson)
+python3 scripts/make_index.py <library-root> --books-dir <folder of source PDFs>
 ```
 
 `--incremental-audio` compares each segment's text by hash and only re-records what changed. On a typical 10-page book that is 50-odd clips; editing an illustration or a Chinese gloss re-records **zero** of them, so a rebuild takes under a second instead of minutes.
 
 Only Spanish is ever sent to the speaker. Chinese is a subtitle and is never read aloud.
+
+---
+
+## Course library
+
+Once you have more than one lesson, the child needs a single place to start.
+
+```bash
+python3 scripts/make_index.py <library-root> --books-dir <folder of source PDFs>
+```
+
+It reads every `<NNN-slug>/content.json` under the root and writes
+`<library-root>/index.html`: a card per lesson with its Spanish and Chinese titles,
+page count, word-card count and first objective; buttons into the lesson and the
+worksheet; a progress count at the top; and a collapsed list of the books that have
+not been made yet (from `--books-dir`). It is idempotent — rerun it after every batch.
+
+**The back-to-library button.** Both finished files render a `🏠 课程库` button in
+their header when the JSON declares where the library is:
+
+```json
+"meta": { "indexHref": "../../index.html" }
+```
+
+The path is relative to the built HTML file. Under the layout this script assumes
+(`<library>/<NNN-slug>/out/`) it is always `"../../index.html"`. Omit the field and no
+button is drawn. The smoke tests check that the button appears exactly when the JSON
+asks for it, and points where the JSON said.
+
+Because it is a relative link, copying a single HTML file somewhere else breaks the
+button — the lesson itself keeps working. Copy the whole library folder.
 
 ---
 

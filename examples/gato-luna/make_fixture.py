@@ -83,6 +83,9 @@ CONTENT = {
         "titleEs": "El gato y la luna",
         "titleZh": "猫与月亮",
         "filenameStem": "gato-luna",
+        # Back-to-library link. From <library>/<lesson>/out/ that is two levels up;
+        # generate the library page itself with `python3 scripts/make_index.py examples`.
+        "indexHref": "../../index.html",
         "lessonType": "spanish_picturebook_reading",
         "objectives": [
             "看懂绘本故事大意，能说出猫想做什么",

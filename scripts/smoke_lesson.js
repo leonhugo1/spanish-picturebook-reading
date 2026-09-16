@@ -57,6 +57,10 @@ async function main() {
       wordCards: qa(".word").length,
       deepSentences: qa("#deepSentences .int-sent").length,
       deepVocab: qa("#deepVocab .int-vocab").length,
+      // Back-to-library link: appears only when the JSON declares meta.indexHref.
+      homeHref: q(".hero-home")?.getAttribute("href") || null,
+      homeVisible: visible(q(".hero-home")),
+      homeExpected: DATA?.meta?.indexHref || null,
     };
   });
 
@@ -123,6 +127,12 @@ async function main() {
     ["hide-Spanish toggle applies", masking.applied],
     ["hide-Spanish actually blurs", masking.blurred],
     ["word card click is wired", cardClick.clicked && cardClick.hasClass],
+    // Must appear exactly when the source asks for it — never silently missing,
+    // never pointing somewhere other than the declared library index.
+    ["back-to-library link matches meta.indexHref",
+      (first.homeExpected === null && first.homeHref === null) ||
+      (first.homeExpected !== null && first.homeHref === first.homeExpected)],
+    ["back-to-library link visible when declared", !first.homeExpected || first.homeVisible],
     ["no page errors", errors.length === 0],
   ];
 

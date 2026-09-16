@@ -46,6 +46,9 @@
              border:1px solid rgba(251,245,233,.4); background:rgba(251,245,233,.12); color:var(--sand); cursor:pointer;
              transition:background .15s ease, border-color .15s ease; }
   .hero-btn:hover{ background:rgba(251,245,233,.22); border-color:rgba(251,245,233,.6); }
+  /* "back to library" — a relative link to the course-library index.html.
+     Set meta.indexHref in the lesson JSON; no button is rendered without it. */
+  .hero-home{ text-decoration:none; display:inline-flex; align-items:center; gap:6px; order:-1; }
   .export-wrap{ position:relative; }
   .export-menu{ position:absolute; right:0; top:calc(100% + 6px); z-index:60; min-width:190px; display:none;
                 background:var(--white); border:1px solid var(--line); border-radius:10px; padding:6px;
@@ -366,6 +369,7 @@ function tipBtn(key, text){
     <div class="hero-top">
       <div class="badges">${badges}</div>
       <div class="hero-actions">
+        ${meta.indexHref ? `<a class="hero-btn hero-home" href="${esc(meta.indexHref)}">🏠 课程库</a>` : ''}
         <div class="export-wrap">
           <button type="button" class="hero-btn" id="exportBtn" aria-haspopup="true" aria-expanded="false">Export ▾</button>
           <div class="export-menu" id="exportMenu">

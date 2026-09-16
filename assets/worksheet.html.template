@@ -41,6 +41,10 @@
   .hero-btn{ font-family:inherit; font-size:12px; font-weight:600; padding:7px 14px; border-radius:999px;
              border:1px solid rgba(251,245,233,.4); background:rgba(251,245,233,.12); color:var(--sand); cursor:pointer; }
   .hero-btn:hover{ background:rgba(251,245,233,.22); }
+  .hero-actions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  /* "back to library" — a relative link to the course-library index.html.
+     Set meta.indexHref in the worksheet JSON; hidden without it. */
+  .hero-home{ text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
   .cuaderno-label{ font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; opacity:.78; margin-bottom:6px; }
   h1.title{ font-size:30px; margin:0 0 6px; font-weight:600; }
   .hero-sub{ font-size:14px; opacity:.82; }
@@ -161,7 +165,10 @@
   <div class="hero-inner">
     <div class="hero-top">
       <div id="heroBadges"></div>
-      <button type="button" class="hero-btn" id="printBtn">Print · 打印</button>
+      <div class="hero-actions">
+        <span id="homeSlot"></span>
+        <button type="button" class="hero-btn" id="printBtn">Print · 打印</button>
+      </div>
     </div>
     <div class="cuaderno-label">Cuaderno del alumno · 练习册</div>
     <h1 class="title display" id="heroTitle"></h1>
@@ -260,6 +267,10 @@ function el(id){ return document.getElementById(id); }
   el('heroTitle').textContent = meta.titleEs || '';
   el('heroSub').textContent = [meta.titleZh, meta.timeEstimate, meta.directions].filter(Boolean).join(' · ');
   el('pageFooter').textContent = meta.footer || 'Lectura de cuento · Cuaderno del alumno';
+  // Back to the course library — only when the lesson declares where it lives.
+  if (meta.indexHref) {
+    el('homeSlot').innerHTML = `<a class="hero-btn hero-home" href="${esc(meta.indexHref)}">🏠 课程库</a>`;
+  }
 })();
 
 /* ---------------- 1 · matching ---------------- */
