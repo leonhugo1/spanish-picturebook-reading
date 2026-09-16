@@ -247,11 +247,17 @@ CONTENT = {
             "placeholder": "我猜的是……，其实是……",
         },
         "speaking": {
-            "hint": "先照着句型说，再换成自己的内容。",
+            "hint": "先点 🔊 听一遍，再跟着读一遍。第三句换成你自己。",
             "prompts": [
-                {"prompt": "¿Qué mira el gato? 猫在看什么？", "placeholder": "El gato mira…"},
-                {"prompt": "¿Qué quiere hacer? 它想做什么？", "placeholder": "Quiere…"},
-                {"prompt": "¿Y tú? ¿Qué quieres hacer esta noche? 你呢？今晚想做什么？", "placeholder": "Quiero…"},
+                {"prompt": "读出书里这一句：",
+                 "es": "El gato mira la luna.",
+                 "zh": "猫看着月亮。"},
+                {"prompt": "说出猫想做什么：",
+                 "es": "El gato quiere tocarla.",
+                 "zh": "猫想摸摸它。"},
+                {"prompt": "换成你自己说一句：",
+                 "es": "Yo quiero dormir esta noche.",
+                 "zh": "我今晚想睡觉。"},
             ],
         },
         "textToSelf": {
