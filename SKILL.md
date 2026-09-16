@@ -285,6 +285,7 @@ button (the lesson itself is unaffected). Copy the whole library to keep it work
 | The watermark check flags half the artwork | mid-grey pixels are counted, and artwork is grey too | a watermark is a *narrow band spanning the full width* — look at the strip, don't trust the threshold |
 | An edit silently did not land | several files edited in the same pass | re-read the changed lines afterwards; never assume the write succeeded |
 | The word-card example line is silent | only `book.word.{i}` was recorded, so the example has no clip | record `book.wordex.{i}` from `exampleEs` too — two taps, two clips |
+| The reading-aloud section asks for nothing repeatable | its clip was recorded from the Chinese lead-in, so the button spoke Chinese | give every speaking prompt an `es` sentence; *that* is what `post.speak.N` records |
 
 ## Boundaries
 
