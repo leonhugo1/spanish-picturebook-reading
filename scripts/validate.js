@@ -50,6 +50,17 @@ function readHtml(file) {
   return html;
 }
 
+/** The build record says whether narration was requested for this output. */
+function readBuildRecord() {
+  const p = path.join(outDir, "source", "build-record.json");
+  if (!fs.existsSync(p)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(p, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
 /** Pull the embedded INITIAL_DATA back out and compare it with the source. */
 function checkEmbedded(html, source, label) {
   const m = html.match(/const INITIAL_DATA = (\{[\s\S]*?\});[\s\S]*?const meta\s*=\s*INITIAL_DATA\.meta/);
@@ -155,8 +166,14 @@ function validateLesson() {
 
   // narration coverage
   const segCount = Object.keys(src.audio || {}).length;
+  const record = readBuildRecord();
+  const builtSilent = !!(record && record.audio && record.audio.enabled === false);
   if (segCount === 0) {
-    fail("lesson has no narration (audio is empty) — rebuild without --no-audio");
+    if (builtSilent) {
+      note("built with --no-audio: no narration. Fine for a layout pass or CI, not for delivery.");
+    } else {
+      fail("lesson has no narration (audio is empty) — edge-tts was probably unavailable; rebuild without --no-audio");
+    }
   } else {
     const expected = pages.length + pages.reduce((a, p) => a + (p.sentences || []).length, 0)
       + (book.wordCards || []).length;

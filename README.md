@@ -1,5 +1,7 @@
 # spanish-picturebook-reading
 
+**English** · [简体中文](README.zh-CN.md)
+
 Turn a **Spanish picture book** — page photos, scans, or a PDF — into a **single-file interactive HTML lesson** plus a **printable worksheet with an answer key for parents**.
 
 Built for a Chinese-speaking child learning Spanish as a foreign language: the interface speaks Chinese, the book stays in Spanish, and every line comes with a translation, a grammar gloss, and a native-sounding recording.

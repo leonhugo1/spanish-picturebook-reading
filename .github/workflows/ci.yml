@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build + validate (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Syntax check
+        run: |
+          set -e
+          for f in scripts/*.js; do
+            node --check "$f"
+            echo "ok  $f"
+          done
+          python3 -m py_compile scripts/prep_pages.py scripts/gen_audio.py examples/gato-luna/make_fixture.py
+          echo "ok  python scripts"
+
+      - name: Build the bundled example (silent — no edge-tts in CI)
+        run: node scripts/build.js --no-audio examples/gato-luna/content.json examples/gato-luna/worksheet.json out
+
+      - name: Validate
+        run: node scripts/validate.js out
+
+      - name: The example must still match its generator
+        run: |
+          python3 examples/gato-luna/make_fixture.py
+          git diff --exit-code -- examples/gato-luna/content.json \
+            || { echo "::error::examples/gato-luna/content.json is out of date — rerun make_fixture.py and commit it"; exit 1; }
+
+  smoke:
+    name: browser smoke tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build the bundled example (silent)
+        run: node scripts/build.js --no-audio examples/gato-luna/content.json examples/gato-luna/worksheet.json out
+
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+        with:
+          chrome-version: stable
+
+      - name: Install puppeteer-core
+        run: npm install --no-save puppeteer-core
+
+      - name: Smoke-test the lesson
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          SMOKE_ALLOW_SILENT: '1'
+        run: node scripts/smoke_lesson.js out/gato-luna_Lectura_Lesson.html /tmp/shot.png
+
+      - name: Smoke-test the worksheet and answer key
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: node scripts/smoke_worksheet.js out/gato-luna_Cuaderno_Worksheet.html /tmp/ak
+
+      - name: Keep the screenshots for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: |
+            /tmp/shot.png
+            /tmp/ak_expanded.png
+            /tmp/ak_folded.png
+          if-no-files-found: ignore
+          retention-days: 7

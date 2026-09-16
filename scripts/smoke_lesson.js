@@ -113,7 +113,9 @@ async function main() {
     ["word cards rendered", first.wordCards === first.words && first.words > 0],
     ["intensive tab folds in every sentence", first.deepSentences > 0],
     ["intensive tab lists deep vocabulary", first.deepVocab >= 0],
-    ["narration clips embedded", first.clips > 0],
+    // CI builds with --no-audio (edge-tts needs the network); SMOKE_ALLOW_SILENT
+    // acknowledges that a silent build is intentional rather than a mistake.
+    ["narration clips embedded", first.clips > 0 || process.env.SMOKE_ALLOW_SILENT === "1"],
     ["next page advances", second.pager !== first.pager],
     ["progress dot follows", second.activeDot === first.activeDot + 1],
     ["prev disabled on page 1", first.prevDisabled === true],
