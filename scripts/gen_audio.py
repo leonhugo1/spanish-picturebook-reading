@@ -99,12 +99,12 @@ def collect_segments(content: dict) -> list[tuple[str, str]]:
         if word:
             segs.append((f"pre.kw.{i}", word))
 
-    # 4 · post-reading speaking prompts
+    # 4 · post-reading speaking prompts — narrate the Spanish sentence the child
+    #     is asked to read aloud. The Chinese lead-in is a subtitle: never spoken.
     post = content.get("postReading") or {}
     speaking = post.get("speaking") or {}
     for i, p in enumerate(speaking.get("prompts") or []):
-        # the schema uses "prompt"; accept the legacy "text" spelling too
-        line = strip_html(p.get("prompt") or p.get("text") or "")
+        line = strip_html(p.get("es") or "")
         if line:
             segs.append((f"post.speak.{i + 1}", line))
 

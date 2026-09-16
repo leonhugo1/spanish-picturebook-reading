@@ -215,8 +215,14 @@
   /* ---------- Post-reading ---------- */
   .post-card{ background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; margin-bottom:16px; }
   .post-card h3{ font-family:'Fraunces',serif; font-size:17px; color:var(--plum); margin:0 0 10px; }
-  .speak-item{ margin-bottom:14px; }
+  .speak-item{ margin-bottom:16px; }
   .speak-item .q{ font-size:15px; font-weight:600; margin-bottom:8px; }
+  /* The sentence the child reads aloud: Spanish in large type, Chinese underneath.
+     Only the Spanish is narrated — the Chinese is a subtitle, as everywhere else. */
+  .speak-line{ background:var(--sand); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+  .speak-es{ font-family:'Fraunces',serif; font-size:19px; line-height:1.5; color:var(--ink);
+             display:flex; align-items:baseline; gap:9px; }
+  .speak-zh{ font-size:13px; color:var(--ink-soft); margin-top:5px; }
   .side-btns{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 14px; }
   .side-btn{ font-family:inherit; font-size:13px; font-weight:700; padding:9px 16px; border-radius:999px;
              border:1.5px solid var(--line); background:var(--white); color:var(--ink-soft); cursor:pointer; }
@@ -702,9 +708,12 @@ document.addEventListener('keydown', e => {
       ${post.speaking.hint ? `<p class="section-hint">${esc(post.speaking.hint)}</p>` : ''}
       ${(post.speaking.prompts || []).map((p, i) => `
         <div class="speak-item">
-          <div class="q">${esc(p.prompt || '')}
-            <button type="button" class="tts" data-segid="post.speak.${i + 1}" title="听一遍 · Escuchar">🔊</button></div>
-          <textarea placeholder="${esc(p.placeholder || '')}"></textarea>
+          ${p.prompt ? `<div class="q">${esc(p.prompt)}</div>` : ''}
+          ${p.es ? `<div class="speak-line">
+            <div class="speak-es"><span>${esc(p.es)}</span>
+              <button type="button" class="tts" data-segid="post.speak.${i + 1}" title="听这个句子 · Escuchar la frase">🔊</button></div>
+            ${p.zh ? `<div class="speak-zh">${esc(p.zh)}</div>` : ''}
+          </div>` : ''}
         </div>`).join('')}</div>`);
 
   if (post.textToSelf)

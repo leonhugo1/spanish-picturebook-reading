@@ -66,6 +66,12 @@ async function main() {
       wordExamples: qa(".word-ex").length,
       wordExampleSegids: qa(".word-ex").filter(e => (e.dataset.segid || "").startsWith("book.wordex.")).length,
       wordExClips: Object.keys(DATA?.audio || {}).filter(k => k.startsWith("book.wordex.")).length,
+      // The speaking section asks the child to read a sentence aloud, so every
+      // prompt must carry an `es` sentence — a bare Chinese lead-in is not
+      // something a child can repeat.
+      speakPrompts: (DATA?.postReading?.speaking?.prompts || []).length,
+      speakLines: qa(".speak-es").length,
+      speakClips: Object.keys(DATA?.audio || {}).filter(k => k.startsWith("post.speak.")).length,
     };
   });
 
@@ -145,6 +151,12 @@ async function main() {
     ["word-card example clips recorded",
       first.wordExamples === 0 || first.wordExClips === first.wordExamples ||
       process.env.SMOKE_ALLOW_SILENT === "1"],
+    // Every speaking prompt must show a full sentence to read aloud, and that
+    // sentence must have narration (never the Chinese lead-in).
+    ["speaking prompts give a sentence to read aloud",
+      first.speakPrompts === first.speakLines && first.speakPrompts > 0],
+    ["speaking sentences are narrated",
+      first.speakClips === first.speakPrompts || process.env.SMOKE_ALLOW_SILENT === "1"],
     ["no page errors", errors.length === 0],
   ];
 

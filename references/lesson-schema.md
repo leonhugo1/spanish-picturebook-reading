@@ -112,7 +112,13 @@ pages do not:
 All five are optional; the template renders whichever are present.
 
 - `predictionCheck`: `{ prompt, placeholder? }`
-- `speaking`: `{ hint?, prompts: [{ prompt, placeholder? }] }` — each prompt gets a speaker button (`post.speak.N`)
+- `speaking`: `{ hint?, prompts: [{ prompt?, es, zh? }] }` — the child **reads a sentence
+  aloud**, so every prompt supplies one:
+  - `prompt` — Chinese lead-in shown above the sentence (never narrated)
+  - `es` — **the Spanish sentence to read aloud**; this is what `post.speak.N` records
+  - `zh` — its Chinese meaning, shown small underneath
+  Give a concrete, complete sentence — not a frame with blanks. The child should be
+  able to press 🔊, hear the whole sentence, and repeat it.
 - `textToSelf`: `{ prompt, placeholder? }`
 - `textToWorld`: `{ prompt, placeholder?, sides: [{ id, label }] }`
 - `exitTicket`: `{ prompt, placeholder?, tipKey? }`
