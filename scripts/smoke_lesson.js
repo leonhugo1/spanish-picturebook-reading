@@ -61,6 +61,11 @@ async function main() {
       homeHref: q(".hero-home")?.getAttribute("href") || null,
       homeVisible: visible(q(".hero-home")),
       homeExpected: DATA?.meta?.indexHref || null,
+      // Word-card examples must be tappable, and each needs its own clip —
+      // otherwise the example line is dead text (a regression we already hit once).
+      wordExamples: qa(".word-ex").length,
+      wordExampleSegids: qa(".word-ex").filter(e => (e.dataset.segid || "").startsWith("book.wordex.")).length,
+      wordExClips: Object.keys(DATA?.audio || {}).filter(k => k.startsWith("book.wordex.")).length,
     };
   });
 
@@ -133,6 +138,13 @@ async function main() {
       (first.homeExpected === null && first.homeHref === null) ||
       (first.homeExpected !== null && first.homeHref === first.homeExpected)],
     ["back-to-library link visible when declared", !first.homeExpected || first.homeVisible],
+    // Every example line carries its own segid; when narration was recorded,
+    // that clip must actually exist.
+    ["word-card examples are clickable clips",
+      first.wordExamples === 0 || first.wordExampleSegids === first.wordExamples],
+    ["word-card example clips recorded",
+      first.wordExamples === 0 || first.wordExClips === first.wordExamples ||
+      process.env.SMOKE_ALLOW_SILENT === "1"],
     ["no page errors", errors.length === 0],
   ];
 

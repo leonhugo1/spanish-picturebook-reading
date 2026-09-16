@@ -88,7 +88,7 @@ Click-to-hear vocabulary cards.
 | `pos` | | Part of speech (`m.`, `f.`, `v.`, `ger.`…). |
 | `image` | | Optional inline data URI. |
 | `emoji` | | Fallback visual when there is no image. |
-| `exampleEs` | | Example sentence, shown on the card. Not narrated. |
+| `exampleEs` | | Example sentence shown on the card. **Narrated**: tapping the example line plays `book.wordex.{i}`, so a child can hear the word in context. |
 
 ## preReading
 
@@ -137,6 +137,7 @@ contract between the two:
 | `book.page.{N}` | Whole page N, read continuously |
 | `book.sent.{N}.{M}` | Sentence M of page N |
 | `book.word.{i}` | Word card i (Spanish only) |
+| `book.wordex.{i}` | The example sentence on word card i |
 | `pre.kw.{i}` | Pre-reading key word i |
 | `post.speak.{i}` | Speaking prompt i (1-based) |
 

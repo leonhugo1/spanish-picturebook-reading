@@ -83,11 +83,14 @@ def collect_segments(content: dict) -> list[tuple[str, str]]:
             if line:
                 segs.append((f"book.sent.{n}.{j + 1}", line))
 
-    # 2 · word cards (click to hear the headword)
+    # 2 · word cards — the card reads the headword, the example line reads itself
     for i, w in enumerate(book.get("wordCards") or []):
         word = strip_html(w.get("es", ""))
         if word:
             segs.append((f"book.word.{i}", word))
+        example = strip_html(w.get("exampleEs", ""))
+        if example:
+            segs.append((f"book.wordex.{i}", example))
 
     # 3 · pre-reading key words
     pre = content.get("preReading") or {}

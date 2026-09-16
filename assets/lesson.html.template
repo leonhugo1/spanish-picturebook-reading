@@ -178,7 +178,10 @@
   .word-es{ font-family:'Fraunces',serif; font-size:19px; font-weight:700; }
   .word-pos{ font-size:11px; color:var(--ink-soft); font-style:italic; margin-left:5px; }
   .word-zh{ font-size:13.5px; color:var(--ink-soft); margin-top:4px; }
-  .word-ex{ font-size:12px; color:var(--ocean-deep); margin-top:8px; line-height:1.5; }
+  .word-ex{ font-size:12px; color:var(--ocean-deep); margin-top:8px; line-height:1.5;
+            padding:2px 5px; border-radius:6px; cursor:pointer; transition:background .15s ease; }
+  .word-ex:hover{ background:var(--ocean-light); }
+  .word-ex.speaking{ background:var(--coral-light); color:var(--coral); font-weight:600; }
 
   /* ---------- Intensive reading ---------- */
   .int-h{ font-family:'Fraunces',serif; font-size:21px; color:var(--plum); margin:30px 0 14px;
@@ -613,7 +616,7 @@ document.addEventListener('keydown', e => {
           ${vis}
           <div><span class="word-es">${esc(w.es || '')}</span>${w.pos ? `<span class="word-pos">${esc(w.pos)}</span>` : ''}</div>
           ${w.zh ? `<div class="word-zh">${esc(w.zh)}</div>` : ''}
-          ${w.exampleEs ? `<div class="word-ex">${esc(w.exampleEs)}</div>` : ''}
+          ${w.exampleEs ? `<div class="word-ex" role="button" tabindex="0" data-segid="book.wordex.${i}" title="点例句听朗读 · tap to hear the example">${esc(w.exampleEs)}</div>` : ''}
         </div>`;
     }).join('') + '</div>';
 
@@ -623,8 +626,27 @@ document.addEventListener('keydown', e => {
       setTimeout(() => card.classList.remove('speaking'), 1200);
       playSeg(card.dataset.segid, null);
     };
-    card.addEventListener('click', go);
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); } });
+    card.addEventListener('click', e => {
+      // Tapping the example sentence reads the sentence, not the word.
+      const ex = e.target.closest('.word-ex');
+      if (ex && ex.dataset.segid) {
+        ex.classList.add('speaking');
+        setTimeout(() => ex.classList.remove('speaking'), 1200);
+        playSeg(ex.dataset.segid, null);
+        return;
+      }
+      go();
+    });
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (e.target.classList.contains('word-ex')) {
+          playSeg(e.target.dataset.segid, null);
+          return;
+        }
+        go();
+      }
+    });
   });
 })();
 
