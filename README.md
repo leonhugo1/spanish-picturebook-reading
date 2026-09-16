@@ -37,7 +37,7 @@ child can move between lessons without hunting through folders — see
 - **Two-line subtitles**: Spanish in large type, Chinese underneath. Toggle either one off — hide the Spanish to practise listening, hide the Chinese to read unaided.
 - **Tap any sentence** to hear just that sentence. "Read the whole page" plays it continuously.
 - **Grammar notes per sentence** — gender, verb endings, `ser` vs `estar`, contractions. This is the part a picture book cannot teach by itself.
-- **Click-to-hear word cards**, each written with its article (`el gato`, not `gato`, so the gender is learned along with the word).
+- **Click-to-hear word cards**, each written with its article (`el gato`, not `gato`, so the gender is learned along with the word). Tap the card for the word; tap the example line under it to hear the same word inside a sentence.
 - **Intensive handout** that automatically gathers every sentence from every page, plus deep vocabulary and cultural notes.
 - **Narration is pre-recorded neural TTS**, embedded as base64. The browser's built-in voices are never used — they sound robotic and differ wildly between devices. If a clip is missing you get a red 🔇, never a robot.
 

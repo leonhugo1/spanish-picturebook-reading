@@ -2,9 +2,8 @@
 name: spanish-picturebook-reading
 description: Turn a Spanish picture book (page photos, scans, or a PDF) into a single-file interactive HTML reading lesson — per-page illustration, Spanish text with Chinese subtitles, neural-voice narration, sentence-level grammar glosses and click-to-hear word cards — plus a printable worksheet with a parent answer key. Use when the user wants a Spanish picture-book lesson, 西语绘本精读, 绘本精读课件, or a matching worksheet.
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
 ---
-
 # Spanish picture-book reading
 
 A picture book is driven by images, so the work here is not "article comprehension".
@@ -41,7 +40,12 @@ built HTML file** — edit the JSON and rebuild.
 │              ‹ prev   ●●○  next ›                     │
 └───────────────────────────────────────────────────────┘
    word cards · Palabras clave   [🐱 el gato] [🌙 la luna] …
+      └ the card reads the headword; the example line under it reads the sentence
 ```
+
+Both halves of a word card are narrated: tapping the card plays `book.word.{i}`,
+tapping the example sentence plays `book.wordex.{i}`. The example line is dead text
+without the second clip — the smoke test fails if it goes missing.
 
 ## Rules
 
@@ -280,6 +284,7 @@ button (the lesson itself is unaffected). Copy the whole library to keep it work
 | Build continues after a failed audit | `cmd \| tail` returns *tail's* exit status | use `if ! cmd; then …`, or redirect to a file and read the status |
 | The watermark check flags half the artwork | mid-grey pixels are counted, and artwork is grey too | a watermark is a *narrow band spanning the full width* — look at the strip, don't trust the threshold |
 | An edit silently did not land | several files edited in the same pass | re-read the changed lines afterwards; never assume the write succeeded |
+| The word-card example line is silent | only `book.word.{i}` was recorded, so the example has no clip | record `book.wordex.{i}` from `exampleEs` too — two taps, two clips |
 
 ## Boundaries
 
